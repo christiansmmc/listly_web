@@ -31,12 +31,11 @@ const LandingPage = ({
             <div className='h-1/2 flex items-center justify-center'>
                 <p className='text-5xl'>Listly</p>
             </div>
-            <div className='h-1/2 flex items-center justify-center'>
+            <div className='h-1/2 flex items-end justify-center pb-16'>
                 <div className='w-full flex flex-col items-center justify-center gap-3'>
                     <div
                         onClick={createCartFirstStep}
-                        className='relative shadow w-5/6 h-16 bg-[#F4976C] flex items-center justify-center rounded-lg cursor-pointer gap-3
-                        transform transition duration-200 hover:scale-105 hover:bg-[#e0875a]'>
+                        className='relative shadow w-5/6 h-16 bg-[#F4976C] flex items-center justify-center rounded-lg cursor-pointer gap-3'>
                         <img src={EmptyCartIcon} alt="icone" className="h-10 w-10"/>
                         <p className='text-lg '>Criar lista de compras</p>
                     </div>

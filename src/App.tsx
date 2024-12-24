@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {LoggedInDataType} from "./types/global.ts";
 import LandingPage from "./pages/LandingPage.tsx";
 import CreateCartPage from "./pages/CreateCartPage.tsx";
+import CartPage from "./pages/CartPage.tsx";
 
 function App() {
     const [newCartCode, setNewCartCode] = useState<number[]>([0, 0, 0, 0]);
@@ -27,8 +28,8 @@ function App() {
 
     return (
         <div className='h-full'>
-            {loggedInData.isLoggedIn
-                ? (<div></div>)
+            {loggedInData.isLoggedIn && loggedInData.cartCode !== undefined && loggedInData.cartPasscode !== undefined
+                ? <CartPage cartCode={loggedInData.cartCode} cartPasscode={loggedInData.cartPasscode}/>
                 : isNewCartProccess
                     ? (
                         <CreateCartPage newCartCode={newCartCode} newCartPasscode={newCartPasscode}

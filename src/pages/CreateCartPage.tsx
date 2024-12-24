@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {CreateCartFirstStepResponse, LoggedInDataType} from "../types/global.ts";
 import EmptyCartIcon from '../assets/compras_vazio.png';
-import LeftArrowIcon from '../assets/seta_esquerda_3.png';
+import LeftArrowIcon from '../assets/seta_esquerda_4.png';
 
 
 interface CreateCartPageProps {
@@ -56,18 +56,18 @@ const CreateCartPage = ({
 
     return (
         <div className='h-full'>
-            <div className='absolute bottom-3 h-16 w-full flex items-center justify-between px-2'>
+            <div className='absolute bottom-10 h-16 w-full flex items-center justify-center px-2 gap-2'>
                 <div className='h-full w-1/5 flex items-center justify-between'>
                     <div
                         onClick={() => setIsNewCartProccess(false)}
-                        className='w-full h-[75%] shadow bg-[#F4976C] flex items-center justify-center rounded-lg cursor-pointer gap-3'>
-                        <img src={LeftArrowIcon} alt="icone" className="h-12 w-12 cursor-pointer"/>
+                        className='w-full h-16 shadow bg-[#F4976C] flex items-center justify-center rounded-lg cursor-pointer gap-3'>
+                        <img src={LeftArrowIcon} alt="icone" className="h-9 w-9 cursor-pointer"/>
                     </div>
                 </div>
                 <div className='h-full w-3/4 flex items-center justify-between'>
                     <div
                         onClick={createCartLastStep}
-                        className='w-full h-[75%] shadow bg-[#F4976C] flex items-center justify-center rounded-lg cursor-pointer gap-3'>
+                        className='w-full h-16 shadow bg-[#F4976C] flex items-center justify-center rounded-lg cursor-pointer gap-3'>
                         <img src={EmptyCartIcon} alt="icone" className="h-10 w-10"/>
                         <p className='text-lg '>Criar lista de compras</p>
                     </div>
@@ -94,7 +94,7 @@ const CreateCartPage = ({
                                 maxLength={1}
                                 placeholder={num.toString()}
                                 onChange={(e) => handleInputChange(Number(e.target.value), index)}
-                                className='flex items-center justify-center text-3xl text-center rounded bg-white w-10 h-14 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                                className='flex items-center justify-center text-3xl text-center rounded bg-white w-10 h-14 border border-gray-300 focus:outline-none focus:ring-2 focus:[#A9DEF9]'
                             />
                         ))}
                     </div>

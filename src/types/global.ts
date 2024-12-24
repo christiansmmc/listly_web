@@ -12,3 +12,15 @@ export interface LoggedInDataType {
     cartCode: string | undefined
     cartPasscode: string | undefined
 }
+
+export interface ItemGetCartDataResponse {
+    id: number,
+    name: string,
+    checked: boolean,
+}
+
+export interface GetCartDataResponse {
+    name: string,
+    code: string,
+    items: ItemGetCartDataResponse[]
+}
