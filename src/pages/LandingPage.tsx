@@ -50,7 +50,7 @@ const LandingPage = ({
                 </div>
             </div>
             <div className="w-full flex flex-col items-center pt-7 mt-24 bg-[#FDF7EB] bg-opacity-80">
-                <p className="text-2xl font-semibold mb-4">Por que usar o Listly?</p>
+                <p className="text-2xl font-semibold mb-4 text-[#F4976C]">Por que usar o Listly?</p>
                 <ul className="space-y-4 text-center text-[#B48768]">
                     <li>📋 Crie listas de compras rapidamente.</li>
                     <li>🔗 Compartilhe com facilidade via link ou código.</li>

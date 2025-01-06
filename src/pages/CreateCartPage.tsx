@@ -2,6 +2,7 @@ import axios from 'axios';
 import {CreateCartFirstStepResponse, LoggedInDataType} from "../types/global.ts";
 import EmptyCartIcon from '../assets/compras_vazio.png';
 import LeftArrowIcon from '../assets/seta_esquerda_4.png';
+import BackgroundImage from '../assets/background.jpeg';
 
 
 interface CreateCartPageProps {
@@ -55,27 +56,32 @@ const CreateCartPage = ({
     };
 
     return (
-        <div className='h-full'>
+        <div className='h-full' style={{ backgroundImage: `url(${BackgroundImage})`}}>
+             <div className="fixed top-0 left-0 w-full h-24 flex items-center justify-center bg-[#FDF7EB] bg-opacity-95">
+                <p className='text-4xl font-extrabold text-[#F4976C]'>Listly</p>
+            </div>
             <div className='absolute bottom-10 h-16 w-full flex items-center justify-center px-2 gap-2'>
                 <div className='h-full w-1/5 flex items-center justify-between'>
                     <div
                         onClick={() => setIsNewCartProccess(false)}
-                        className='w-full h-16 shadow bg-[#F4976C] flex items-center justify-center rounded-lg cursor-pointer gap-3'>
+                        className='w-full h-16 shadow bg-[#fdfaf2] border border-[#B48768] flex items-center justify-center rounded-lg cursor-pointer gap-3
+                        transition transform hover:scale-[1.01] hover:shadow-lg active:scale-[0.99] active:shadow-sm'>
                         <img src={LeftArrowIcon} alt="icone" className="h-9 w-9 cursor-pointer"/>
                     </div>
                 </div>
                 <div className='h-full w-3/4 flex items-center justify-between'>
                     <div
                         onClick={createCartLastStep}
-                        className='w-full h-16 shadow bg-[#F4976C] flex items-center justify-center rounded-lg cursor-pointer gap-3'>
+                        className='w-full h-16 shadow bg-[#fdfaf2] border border-[#B48768] flex items-center justify-center rounded-lg cursor-pointer gap-3
+                        transition transform hover:scale-[1.01] hover:shadow-lg active:scale-[0.99] active:shadow-sm'>
                         <img src={EmptyCartIcon} alt="icone" className="h-10 w-10"/>
-                        <p className='text-lg '>Criar lista de compras</p>
+                        <p className='text-lg'>Criar lista de compras</p>
                     </div>
                 </div>
             </div>
-            <div className='h-full flex flex-col items-center justify-center'>
-                <div className='pt-10 flex flex-col items-center gap-5'>
-                    <p className='text-2xl text-center'>Código da lista de compras</p>
+            <div className='h-full flex flex-col items-center justify-center gap-2'>
+                <div className='w-[90%] mt-10 flex flex-col items-center gap-5 bg-[#fdfaf2] bg-opacity-95 py-12 border border-[#B48768] rounded '>
+                    <p className='text-2xl text-center font-semibold text-[#F4976C]'>Código da sua nova lista de compras</p>
                     <div className='flex gap-2'>
                         {newCartCode.map(num => {
                             return <p
@@ -83,8 +89,8 @@ const CreateCartPage = ({
                         })}
                     </div>
                 </div>
-                <div className='pt-16 flex flex-col items-center gap-5'>
-                    <p className='text-2xl text-center'>Digite a senha para a lista de compras</p>
+                <div className='w-[90%] flex flex-col items-center gap-5 bg-[#fdfaf2] bg-opacity-95 py-12 border border-[#B48768] rounded '>
+                    <p className='text-2xl text-center font-semibold text-[#F4976C]'>Digite a senha para acessar sua lista de compras</p>
                     <div className='flex gap-2'>
                         {newCartPasscode.map((num, index) => (
                             <input
