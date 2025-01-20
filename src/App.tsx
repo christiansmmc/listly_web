@@ -29,7 +29,8 @@ function App() {
     return (
         <div className='h-full'>
             {loggedInData.isLoggedIn && loggedInData.cartCode !== undefined && loggedInData.cartPasscode !== undefined
-                ? <CartPage cartCode={loggedInData.cartCode} cartPasscode={loggedInData.cartPasscode}/>
+                ? <CartPage cartCode={loggedInData.cartCode} cartPasscode={loggedInData.cartPasscode}
+                            setLoggedInData={setLoggedInData}/>
                 : isNewCartProccess
                     ? (
                         <CreateCartPage newCartCode={newCartCode} newCartPasscode={newCartPasscode}
