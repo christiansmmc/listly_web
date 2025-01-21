@@ -1,8 +1,7 @@
 import EmptyCartIcon from '../assets/compras_vazio.png';
 import FullCartIcon from '../assets/compras_cheio.png';
 import BackgroundImage from '../assets/background.jpeg';
-import axios from 'axios';
-import {CreateCartFirstStepResponse} from "../types/global.ts";
+import {createRoomFirstStepRequest} from "../api/roomApi.ts";
 
 interface LandingPageProps {
     setNewCartCode: (code: number[]) => void;
@@ -13,11 +12,10 @@ const LandingPage = ({
                          setNewCartCode,
                          setIsNewCartProccess
                      }: LandingPageProps) => {
-
     const createCartFirstStep = () => {
-        axios.post<CreateCartFirstStepResponse>('http://127.0.0.1:5000/api/v1/rooms/initial-step')
+        createRoomFirstStepRequest()
             .then(res => {
-                const code: number[] = res.data.code.split("").map(Number);
+                const code: number[] = res.code.split("").map(Number);
 
                 setNewCartCode(code);
                 setIsNewCartProccess(true)
@@ -28,19 +26,20 @@ const LandingPage = ({
     }
 
     return (
-        <div className='h-full' style={{ backgroundImage: `url(${BackgroundImage})`}}>
+        <div className='h-full' style={{backgroundImage: `url(${BackgroundImage})`}}>
             <div className="fixed top-0 left-0 w-full h-24 flex items-center justify-center bg-[#FDF7EB] bg-opacity-80">
                 <p className='text-4xl font-extrabold text-[#F4976C]'>Listly</p>
             </div>
             <div className='pt-40 px-4 bg-[#FDF7EB] bg-opacity-75'>
-                <p className='text-4xl font-extrabold text-[#F4976C]'>Crie e compartilhe sua lista de compras de forma simples e prática!</p>
+                <p className='text-4xl font-extrabold text-[#F4976C]'>Crie e compartilhe sua lista de compras de forma
+                    simples e prática!</p>
             </div>
             <div className='w-full px-3 flex gap-5 mt-20'>
-            <div 
-                onClick={createCartFirstStep}
-                className="shadow-md w-1/2 h-32 px-8 flex flex-col justify-center items-center bg-[#fdfaf2] rounded-lg border border-[#B48768] cursor-pointer
+                <div
+                    onClick={createCartFirstStep}
+                    className="shadow-md w-1/2 h-32 px-8 flex flex-col justify-center items-center bg-[#fdfaf2] rounded-lg border border-[#B48768] cursor-pointer
                                 transition transform hover:scale-[1.01] hover:shadow-lg active:scale-[0.99] active:shadow-sm">
-                    <img src={EmptyCartIcon} alt="icone" className="h-10 w-10" />
+                    <img src={EmptyCartIcon} alt="icone" className="h-10 w-10"/>
                     <p className="text-lg text-center">Criar lista de compras</p>
                 </div>
                 <div className="shadow-md w-1/2 h-32 px-8 flex flex-col justify-center items-center bg-[#fdfaf2] rounded-lg border border-[#B48768] cursor-pointer

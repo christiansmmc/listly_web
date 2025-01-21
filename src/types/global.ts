@@ -1,3 +1,5 @@
+import {AxiosRequestConfig} from "axios";
+
 export interface CreateCartFirstStepResponse {
     code: string
 }
@@ -8,9 +10,8 @@ export interface CreateCartFirstStepResponse {
 }
 
 export interface LoggedInDataType {
-    isLoggedIn: boolean,
-    cartCode: string | undefined
-    cartPasscode: string | undefined
+    roomCode: string | undefined
+    roomPasscode: string | undefined
 }
 
 export interface CategoryResponse {
@@ -41,4 +42,25 @@ export interface CategoryGroup {
     categoryId: number,
     categoryName: string,
     items: ItemsCategoryGroup[]
+}
+
+export interface ListCategoryResponse {
+    id: number,
+    name: string,
+}
+
+export interface AddItemRequest {
+    name?: string,
+    category_id?: number,
+}
+
+export interface ValidateRoomRequest {
+    code: string
+    passcode: string
+}
+
+export interface AuthHeader extends AxiosRequestConfig {
+    headers: {
+        'X-Room-Passcode': string;
+    };
 }

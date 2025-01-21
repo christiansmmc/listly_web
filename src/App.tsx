@@ -1,43 +1,53 @@
 import './App.css'
 import {useEffect, useState} from "react";
-import {LoggedInDataType} from "./types/global.ts";
+import {LoggedInDataType, ValidateRoomRequest} from "./types/global.ts";
 import LandingPage from "./pages/LandingPage.tsx";
 import CreateCartPage from "./pages/CreateCartPage.tsx";
 import CartPage from "./pages/CartPage.tsx";
+import {validateRoomRequest} from "./api/roomApi.ts";
 
 function App() {
     const [newCartCode, setNewCartCode] = useState<number[]>([0, 0, 0, 0]);
     const [newCartPasscode, setNewCartPasscode] = useState<number[]>([0, 0, 0, 0]);
-    const [isNewCartProccess, setIsNewCartProccess] = useState(false);
-
-
-    // TODO
-    //  salvar no localStorage tudo menos o isLoggedIn, esse estado sera apenas no codigo ao iniciar sera feito um login na API
-    //      sucesso -> isLoggedIn: true
-    //      falha -> isLoggedIn: false
+    const [isNewCartProcess, setIsNewCartProcess] = useState(false);
     const [loggedInData, setLoggedInData] = useState<LoggedInDataType>({
-        "isLoggedIn": false,
-        "cartCode": undefined,
-        "cartPasscode": undefined,
+        roomCode: undefined,
+        roomPasscode: undefined,
     });
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const validateSavedRoom = (data: string) => {
+        const localStorageData: LoggedInDataType = JSON.parse(data);
+        const requestBody: ValidateRoomRequest = {
+            code: localStorageData.roomCode || "",
+            passcode: localStorageData.roomPasscode || ""
+        };
+
+        validateRoomRequest(requestBody)
+            .then(() => {
+                setLoggedInData(localStorageData)
+                setIsLoggedIn(true)
+            });
+    }
 
     useEffect(() => {
         const data = localStorage.getItem('data');
-        if (data) setLoggedInData(JSON.parse(data));
+        if (data) validateSavedRoom(data);
     }, [])
 
     return (
         <div className='h-full'>
-            {loggedInData.isLoggedIn && loggedInData.cartCode !== undefined && loggedInData.cartPasscode !== undefined
-                ? <CartPage cartCode={loggedInData.cartCode} cartPasscode={loggedInData.cartPasscode}
-                            setLoggedInData={setLoggedInData}/>
-                : isNewCartProccess
+            {isLoggedIn && loggedInData.roomCode !== undefined && loggedInData.roomPasscode !== undefined
+                ? <CartPage roomCode={loggedInData.roomCode} roomPasscode={loggedInData.roomPasscode}
+                            setLoggedInData={setLoggedInData} setIsLoggedIn={setIsLoggedIn}/>
+                : isNewCartProcess
                     ? (
                         <CreateCartPage newCartCode={newCartCode} newCartPasscode={newCartPasscode}
                                         setNewCartPasscode={setNewCartPasscode}
-                                        setIsNewCartProccess={setIsNewCartProccess} setLoggedInData={setLoggedInData}/>
+                                        setIsNewCartProccess={setIsNewCartProcess} setLoggedInData={setLoggedInData}
+                                        setIsLoggedIn={setIsLoggedIn}/>
                     )
-                    : <LandingPage setNewCartCode={setNewCartCode} setIsNewCartProccess={setIsNewCartProccess}/>
+                    : <LandingPage setNewCartCode={setNewCartCode} setIsNewCartProccess={setIsNewCartProcess}/>
             }
         </div>
     )

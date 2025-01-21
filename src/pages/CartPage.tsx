@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {CategoryGroup, GetCartDataResponse, ItemGetCartDataResponse, LoggedInDataType} from "../types/global.ts";
 import {useEffect, useState} from "react";
 import BackgroundImage from "../assets/background.jpeg";
@@ -12,26 +11,27 @@ import ToiletIcon from "../assets/papel-higienico.png";
 import CleanIcon from "../assets/sabao-para-louca.png";
 import LeftArrowIcon from "../assets/costas.png";
 import ConfigIcon from "../assets/definicoes.png";
+import AddItemModal from "../components/AddItemModal.tsx";
+import {capitalize} from "../utils/stringUtils.ts";
+import {getRoomData} from "../api/roomApi.ts";
 
 
 interface CartPageProps {
-    cartCode: string;
-    cartPasscode: string;
+    roomCode: string;
+    roomPasscode: string;
     setLoggedInData: (data: LoggedInDataType) => void;
+    setIsLoggedIn: (isLoggedIn: boolean) => void;
 }
 
-const CartPage = ({cartCode, cartPasscode, setLoggedInData}: CartPageProps,) => {
+const CartPage = ({roomCode, roomPasscode, setLoggedInData, setIsLoggedIn}: CartPageProps,) => {
     const [cartData, setCartData] = useState<GetCartDataResponse>()
     const [categoryGroup, setCategoryGroup] = useState<CategoryGroup[]>()
+    const [isAddItemOpen, setIsAddItemOpen] = useState<boolean>(false);
 
     const getCartData = () => {
-        const authHeader = {
-            headers: {'X-Room-Passcode': cartPasscode}
-        }
-
-        axios.get<GetCartDataResponse>(`http://127.0.0.1:5000/api/v1/rooms/${cartCode}`, authHeader)
+        getRoomData(roomCode, roomPasscode)
             .then(res => {
-                const groupedItems = Object.values(res.data.items.reduce((acc: Record<number, CategoryGroup>, item: ItemGetCartDataResponse) => {
+                const groupedItems: CategoryGroup[] = Object.values(res.items.reduce((acc: Record<number, CategoryGroup>, item: ItemGetCartDataResponse) => {
                     const {id: categoryId, name: categoryName} = item.category;
                     if (!acc[categoryId]) {
                         acc[categoryId] = {
@@ -50,7 +50,7 @@ const CartPage = ({cartCode, cartPasscode, setLoggedInData}: CartPageProps,) => 
                     return acc;
                 }, {}));
 
-                setCartData(res.data);
+                setCartData(res);
                 setCategoryGroup(groupedItems)
             })
             .catch(error => {
@@ -79,13 +79,21 @@ const CartPage = ({cartCode, cartPasscode, setLoggedInData}: CartPageProps,) => 
 
     const handleLogout = () => {
         const loggedInData: LoggedInDataType = {
-            "isLoggedIn": false,
-            "cartCode": undefined,
-            "cartPasscode": undefined,
+            roomCode: undefined,
+            roomPasscode: undefined,
         }
 
         setLoggedInData(loggedInData)
-        localStorage.setItem('data', JSON.stringify(loggedInData));
+        setIsLoggedIn(false)
+        localStorage.clear();
+    }
+
+    const updateCart = () => {
+        getCartData()
+    }
+
+    const handleCloseAddItemOpen = () => {
+        setIsAddItemOpen(false);
     }
 
     return (
@@ -129,7 +137,7 @@ const CartPage = ({cartCode, cartPasscode, setLoggedInData}: CartPageProps,) => 
                                                 checked={item.checked}
                                                 // TODO ON CHANGE HANDLER THAT SET CHECKED AND MAKE REQUEST
                                             />
-                                            <div className='text-xl'>{item.name}</div>
+                                            <div className='text-xl'>{capitalize(item.name)}</div>
                                         </div>
                                     )
                                 })}
@@ -144,12 +152,19 @@ const CartPage = ({cartCode, cartPasscode, setLoggedInData}: CartPageProps,) => 
                     <img src={LeftArrowIcon} alt="icone" className="h-9 w-9" onClick={handleLogout}/>
                 </div>
                 <div className='flex justify-center items-center w-full h-20'>
-                    <p className='px-5 py-3 border border-[#F4976C] rounded text-[#F4976C] bg-[#FDF7EB] font-extrabold'>Adicionar item a lista</p>
+                    <p
+                        className='px-5 py-3 border border-[#F4976C] rounded text-[#F4976C] bg-[#FDF7EB] font-extrabold'
+                        onClick={() => setIsAddItemOpen(true)}>
+                        Adicionar item a lista
+                    </p>
                 </div>
                 <div className='flex justify-center items-center w-36 h-20 cursor-pointer'>
                     <img src={ConfigIcon} alt="icone" className="h-9 w-9"/>
                 </div>
             </div>
+            {isAddItemOpen &&
+                <AddItemModal roomCode={roomCode} roomPasscode={roomPasscode} updateCart={updateCart}
+                              handleCloseAddItemOpen={handleCloseAddItemOpen}/>}
         </div>
     )
 }
