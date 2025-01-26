@@ -31,3 +31,17 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #f4976c;
+    border-radius: 9999px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #fdf7eb;
+}

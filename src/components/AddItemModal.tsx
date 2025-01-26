@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {AddItemRequest, ListCategoryResponse} from "../types/global.ts";
 import CloseIcon from '../assets/erro.png'
 import {getCategories} from "../api/categoryApi.ts";
-import {createItem} from "../api/itemApi.ts";
+import {createItemRequest} from "../api/itemApi.ts";
 
 interface AddItemModalProps {
     roomCode: string;
@@ -26,7 +26,7 @@ const AddItemModal = ({roomCode, roomPasscode, updateCart, handleCloseAddItemOpe
     }
 
     const addItem = () => {
-        createItem(item, roomCode, roomPasscode)
+        createItemRequest(item, roomCode, roomPasscode)
             .then(() => {
                 updateCart()
                 handleCloseAddItemOpen()
