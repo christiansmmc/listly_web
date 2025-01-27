@@ -6,33 +6,33 @@ import CleanIcon from "../assets/vassoura.png";
 import DeleteIcon from "../assets/lixo.png";
 
 interface EditRoomModal {
-    roomCode: string;
-    roomPasscode: string;
+    roomCode: string | undefined;
+    roomPasscode: string | undefined;
     cartData: GetCartDataResponse | undefined;
     updateCart: VoidFunction;
     handleCloseEditRoomOpen: VoidFunction;
 }
 
-const EditRoomModal = ({roomCode, roomPasscode, cartData, updateCart, handleCloseEditRoomOpen}: EditRoomModal) => {
+const EditRoomModal = ({
+                           roomCode,
+                           roomPasscode,
+                           cartData,
+                           updateCart,
+                           handleCloseEditRoomOpen
+                       }: EditRoomModal) => {
     const [roomName, setRoomName] = useState<string>("");
-    // const addItem = () => {
-    //     createItemRequest(item, roomCode, roomPasscode)
-    //         .then(() => {
-    //             updateCart()
-    //             handleCloseAddItemOpen()
-    //         })
-    //         .catch(error => {
-    //             console.error('Erro ao fazer a requisição:', error);
-    //         });
-    // }
+    const [copied, setCopied] = useState(false);
 
     const handleRoomName = (name: string) => {
         setRoomName(name);
     }
 
     const handleCopyRoom = () => {
-        const url = `${window.location.origin}/${roomCode}?roomPasscode=${roomPasscode}`;
-        navigator.clipboard.writeText(url)
+        const url = `${window.location.origin}/room/${roomCode}?roomPasscode=${roomPasscode}`;
+        navigator.clipboard.writeText(url).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        });
     }
 
     return (
@@ -43,11 +43,8 @@ const EditRoomModal = ({roomCode, roomPasscode, cartData, updateCart, handleClos
                     <div className='absolute -top-3 -left-3' onClick={handleCloseEditRoomOpen}>
                         <img src={CloseIcon} alt="icone" className="h-11 w-11"/>
                     </div>
-                    {/*<div className='w-[90%] mx-auto flex items-center justify-center pt-7 border-b border-[#F4976C]'>*/}
-                    {/*    <p className='text-2xl text-[#F4976C] font-extrabold'>Adicione um Item a sua lista</p>*/}
-                    {/*</div>*/}
                     <div className='relative flex flex-col items-center justify-center h-full pb-20 gap-10'>
-                        <div className='w-full flex flex-col justify-center items-center gap-2'>
+                        <div className='relative w-full flex flex-col justify-center items-center gap-2'>
                             <div className='text-2xl'>Nome da lista de compras</div>
                             <input
                                 placeholder={cartData?.name || "Lista de compras"}
@@ -56,9 +53,15 @@ const EditRoomModal = ({roomCode, roomPasscode, cartData, updateCart, handleClos
                                 value={roomName}/>
                         </div>
                         <div className='w-full flex justify-center items-center gap-10'>
-                            <div className='p-3 border border-[#F4976C] rounded-lg'
+                            <div className='relative p-3 border border-[#F4976C] rounded-lg cursor-pointer'
                                  onClick={handleCopyRoom}>
                                 <img src={CopyIcon} alt="icone" className="h-12 w-12"/>
+                                {copied && (
+                                    <div
+                                        className='absolute w-52 -bottom-20 left-0 bg-[#F4976C] text-white p-2 rounded shadow-lg z-50  cursor-default'>
+                                        Link copiado para a área de transferência!
+                                    </div>
+                                )}
                             </div>
                             <div className='p-3 border border-[#F4976C] rounded-lg'>
                                 <img src={CleanIcon} alt="icone" className="h-12 w-12"/>

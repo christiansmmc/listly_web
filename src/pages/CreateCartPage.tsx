@@ -2,46 +2,56 @@ import {CreateCartFirstStepResponse, LoggedInDataType} from "../types/global.ts"
 import EmptyCartIcon from '../assets/compras_vazio.png';
 import LeftArrowIcon from '../assets/seta_esquerda_4.png';
 import BackgroundImage from '../assets/background.jpeg';
-import {createRoomLastStepRequest} from "../api/roomApi.ts";
+import {createRoomFirstStepRequest, createRoomLastStepRequest} from "../api/roomApi.ts";
 import {encrypt} from "../utils/securityUtils.ts";
+import {useEffect, useState} from "react";
+import {useAuthData} from "../context/AuthContext.tsx";
+import {useLocation} from "wouter";
+import {useRoomData} from "../context/RoomContext.tsx";
 
+const CreateCartPage = () => {
+    const [newCartCode, setNewCartCode] = useState<number[]>([]);
+    const [newCartPasscode, setNewCartPasscode] = useState<number[]>([0, 0, 0, 0]);
 
-interface CreateCartPageProps {
-    newCartCode: number[];
-    newCartPasscode: number[];
-    setNewCartPasscode: (passcode: number[]) => void;
-    setIsNewCartProccess: (isProcess: boolean) => void;
-    setLoggedInData: (data: LoggedInDataType) => void;
-    setIsLoggedIn: (isLoggedIn: boolean) => void;
-}
+    const [, setLocation] = useLocation();
 
-const CreateCartPage = ({
-                            newCartCode,
-                            newCartPasscode,
-                            setNewCartPasscode,
-                            setIsNewCartProccess,
-                            setLoggedInData,
-                            setIsLoggedIn
-                        }: CreateCartPageProps) => {
+    const {setRoomCode, setRoomPasscode} = useRoomData();
+    const {setIsLoggedIn} = useAuthData();
+
+    const createCartFirstStep = () => {
+        createRoomFirstStepRequest()
+            .then(res => {
+                const code: number[] = res.code.split("").map(Number);
+                setNewCartCode(code);
+            })
+            .catch(error => {
+                console.error('Erro ao fazer a requisição:', error);
+            });
+    }
+
     const createCartLastStep = () => {
-        const cartCode = newCartCode.join("");
-        const cartPasscode = newCartPasscode.join("");
+        const createdRoomCode = newCartCode.join("");
+        const createdRoomPasscode = newCartPasscode.join("");
 
         const requestBody: CreateCartFirstStepResponse = {
-            code: cartCode,
-            passcode: cartPasscode,
+            code: createdRoomCode,
+            passcode: createdRoomPasscode,
         }
 
         createRoomLastStepRequest(requestBody)
             .then(() => {
                 const loggedInData: LoggedInDataType = {
-                    roomCode: cartCode,
-                    roomPasscode: encrypt(cartPasscode),
+                    roomCode: createdRoomCode,
+                    roomPasscode: encrypt(createdRoomPasscode),
                 }
 
                 setIsLoggedIn(true)
-                setLoggedInData(loggedInData)
+                setRoomCode(createdRoomCode)
+                setRoomPasscode(encrypt(createdRoomPasscode))
                 localStorage.setItem('data', JSON.stringify(loggedInData));
+
+                console.log(createdRoomCode)
+                setLocation(`/room/${createdRoomCode}`)
             })
             .catch(error => {
                 console.error('Erro ao fazer a requisição:', error);
@@ -58,8 +68,12 @@ const CreateCartPage = ({
         }
     };
 
+    useEffect(() => {
+        createCartFirstStep()
+    }, [])
+
     return (
-        <div className='h-full' style={{backgroundImage: `url(${BackgroundImage})`}}>
+        <div className='h-full w-full' style={{backgroundImage: `url(${BackgroundImage})`}}>
             <div className="fixed top-0 left-0 w-full h-24 flex items-center justify-center bg-[#FDF7EB] bg-opacity-95">
                 <p className='text-4xl font-extrabold text-[#F4976C]'>Listly</p>
             </div>
@@ -97,7 +111,7 @@ const CreateCartPage = ({
             <div className='absolute bottom-10 h-16 w-full flex items-center justify-center px-2 gap-2'>
                 <div className='h-full w-1/5 flex items-center justify-between'>
                     <div
-                        onClick={() => setIsNewCartProccess(false)}
+                        onClick={() => setLocation("/")}
                         className='w-full h-16 shadow bg-[#fdfaf2] border border-[#B48768] flex items-center justify-center rounded-lg cursor-pointer gap-3
                         transition transform hover:scale-[1.01] hover:shadow-lg active:scale-[0.99] active:shadow-sm'>
                         <img src={LeftArrowIcon} alt="icone" className="h-9 w-9 cursor-pointer"/>

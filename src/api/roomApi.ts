@@ -17,7 +17,7 @@ export const validateRoomRequest = async (requestBody: ValidateRoomRequest) => {
     await api.post(`/rooms/validate`, requestBody);
 }
 
-export const getRoomData = async (roomCode: string, roomPasscode: string): Promise<GetCartDataResponse> => {
+export const getRoomData = async (roomCode: string | undefined, roomPasscode: string | undefined): Promise<GetCartDataResponse> => {
     const header: AuthHeader = {
         headers: {'X-Room-Passcode': decrypt(roomPasscode)}
     }

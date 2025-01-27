@@ -1,4 +1,10 @@
-import {CategoryGroup, GetCartDataResponse, ItemGetCartDataResponse, LoggedInDataType} from "../types/global.ts";
+import {
+    CategoryGroup,
+    GetCartDataResponse,
+    ItemGetCartDataResponse,
+    LoggedInDataType,
+    ValidateRoomRequest
+} from "../types/global.ts";
 import {useEffect, useState} from "react";
 import BackgroundImage from "../assets/background.jpeg";
 import FruitIcon from "../assets/maca.png";
@@ -14,19 +20,20 @@ import LeftArrowIcon from "../assets/resposta.png";
 import ConfigIcon from "../assets/definicoes.png";
 import AddItemModal from "../components/AddItemModal.tsx";
 import {capitalize} from "../utils/stringUtils.ts";
-import {getRoomData} from "../api/roomApi.ts";
+import {getRoomData, validateRoomRequest} from "../api/roomApi.ts";
 import {checkItemRequest, removeItemRequest} from "../api/itemApi.ts";
 import EditRoomModal from "../components/EditRoomModal.tsx";
+import {useAuthData} from "../context/AuthContext.tsx";
+import {useLocation} from "wouter";
+import {decrypt} from "../utils/securityUtils.ts";
+import {useRoomData} from "../context/RoomContext.tsx";
 
+const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
+    const [, setLocation] = useLocation();
 
-interface CartPageProps {
-    roomCode: string;
-    roomPasscode: string;
-    setLoggedInData: (data: LoggedInDataType) => void;
-    setIsLoggedIn: (isLoggedIn: boolean) => void;
-}
+    const {roomCode, roomPasscode, setRoomPasscode, setRoomCode} = useRoomData();
+    const {isLoggedIn, setIsLoggedIn} = useAuthData();
 
-const CartPage = ({roomCode, roomPasscode, setLoggedInData, setIsLoggedIn}: CartPageProps,) => {
     const [cartData, setCartData] = useState<GetCartDataResponse>()
     const [categoryGroup, setCategoryGroup] = useState<CategoryGroup[]>()
     const [isAddItemOpen, setIsAddItemOpen] = useState<boolean>(false);
@@ -106,11 +113,12 @@ const CartPage = ({roomCode, roomPasscode, setLoggedInData, setIsLoggedIn}: Cart
                 setCategoryGroup((prevCategoryGroup) => {
                     if (!prevCategoryGroup) return prevCategoryGroup;
 
-                    return prevCategoryGroup.map((category) => {
-                        const updatedItems = category.items.filter((item) => item.id !== itemId);
-
-                        return {...category, items: updatedItems};
-                    });
+                    return prevCategoryGroup
+                        .map((category) => {
+                            const updatedItems = category.items.filter((item) => item.id !== itemId);
+                            return {...category, items: updatedItems};
+                        })
+                        .filter((category) => category.items.length > 0); // Remove categorias vazias
                 });
             })
             .catch((error) => {
@@ -119,8 +127,66 @@ const CartPage = ({roomCode, roomPasscode, setLoggedInData, setIsLoggedIn}: Cart
     };
 
     useEffect(() => {
-        getCartData()
-    }, [])
+        const params = new URLSearchParams(window.location.search);
+        const urlRoomPasscode = params.get("roomPasscode");
+
+        if (params.size > 0 && urlRoomPasscode) {
+            try {
+                validateRoom(urlRoomCode, urlRoomPasscode);
+                setLocation(`/room/${urlRoomCode}`)
+                return;
+            } catch {
+                handleLogout()
+                return;
+            }
+        }
+
+        if (isLoggedIn && roomCode && roomPasscode) {
+            if (roomCode !== urlRoomCode) {
+                handleLogout();
+            } else {
+                validateRoom(roomCode, roomPasscode);
+                getCartData();
+            }
+        } else if (!isLoggedIn) {
+            const data = localStorage.getItem("data");
+            if (data) {
+                const localStorageData: LoggedInDataType = JSON.parse(data);
+                validateRoom(
+                    localStorageData.roomCode || "",
+                    localStorageData.roomPasscode || ""
+                );
+            }
+        } else {
+            console.log("AQUI 3");
+            handleLogout()
+        }
+    }, [isLoggedIn, roomCode, roomPasscode]);
+
+    const validateRoom = (roomCode: string, roomPasscode: string) => {
+        const requestBody: ValidateRoomRequest = {
+            code: roomCode,
+            passcode: decrypt(roomPasscode),
+        };
+
+        try {
+            validateRoomRequest(requestBody)
+                .then(() => {
+                    setRoomCode(roomCode);
+                    setRoomPasscode(roomPasscode);
+                    setIsLoggedIn(true);
+
+                    const loggedInData: LoggedInDataType = {
+                        roomCode: roomCode,
+                        roomPasscode: roomPasscode,
+                    };
+                    localStorage.setItem("data", JSON.stringify(loggedInData));
+                });
+        } catch (error) {
+            console.error("Erro na validação da sala:", error);
+            setLocation("/");
+        }
+    };
 
     const categoryIcons: Record<string, string> = {
         "Frutas": FruitIcon,
@@ -138,14 +204,12 @@ const CartPage = ({roomCode, roomPasscode, setLoggedInData, setIsLoggedIn}: Cart
     };
 
     const handleLogout = () => {
-        const loggedInData: LoggedInDataType = {
-            roomCode: undefined,
-            roomPasscode: undefined,
-        }
-
-        setLoggedInData(loggedInData)
+        setRoomCode(undefined)
+        setRoomPasscode(undefined)
         setIsLoggedIn(false)
         localStorage.clear();
+
+        setLocation("/")
     }
 
     const updateCart = () => {
@@ -157,7 +221,6 @@ const CartPage = ({roomCode, roomPasscode, setLoggedInData, setIsLoggedIn}: Cart
     }
 
     const handleCloseEditRoomOpen = () => {
-        console.log("Asd")
         setIsEditRoomOpen(false);
     }
 
@@ -186,6 +249,7 @@ const CartPage = ({roomCode, roomPasscode, setLoggedInData, setIsLoggedIn}: Cart
                 {categoryGroup?.map(category => {
                     return (
                         <div
+                            key={category.categoryId}
                             className="bg-[#FDF7EB] bg-opacity-95 w-[98%] rounded mx-auto py-3 border-2 border-[#F3E0C2]">
                             <div className='flex items-center gap-6 p-5 pl-7 '>
                                 <img src={getCategoryIcon(category.categoryName)} alt="icone" className="h-9 w-9"/>
@@ -195,13 +259,13 @@ const CartPage = ({roomCode, roomPasscode, setLoggedInData, setIsLoggedIn}: Cart
                             <div className='flex flex-col gap-1'>
                                 {category.items.map(item => {
                                     return (
-                                        <div className='flex items-center justify-between px-7 py-2'>
+                                        <div key={item.id} className='flex items-center justify-between px-7 py-2'>
                                             <div className='flex items-center gap-6'>
                                                 <input
                                                     className='w-5 h-5 accent-[#F4976C] focus:ring-1 focus:ring-[#F4976C]'
                                                     type="checkbox"
                                                     checked={item.checked}
-                                                    onClick={() => checkItem(item.id)}
+                                                    onChange={() => checkItem(item.id)}
                                                 />
                                                 <div className='text-xl'>{capitalize(item.name)}</div>
                                             </div>

@@ -5,13 +5,18 @@ import {getCategories} from "../api/categoryApi.ts";
 import {createItemRequest} from "../api/itemApi.ts";
 
 interface AddItemModalProps {
-    roomCode: string;
-    roomPasscode: string;
+    roomCode: string | undefined;
+    roomPasscode: string | undefined;
     updateCart: () => void;
     handleCloseAddItemOpen: () => void;
 }
 
-const AddItemModal = ({roomCode, roomPasscode, updateCart, handleCloseAddItemOpen}: AddItemModalProps) => {
+const AddItemModal = ({
+                          roomCode,
+                          roomPasscode,
+                          updateCart,
+                          handleCloseAddItemOpen
+                      }: AddItemModalProps) => {
     const [categories, setCategories] = useState<ListCategoryResponse[]>([])
     const [item, setItem] = useState<AddItemRequest>({})
 
@@ -55,14 +60,17 @@ const AddItemModal = ({roomCode, roomPasscode, updateCart, handleCloseAddItemOpe
     }, [])
 
     return (
+
         <div className='absolute top-0 w-full h-full bg-[#FDF7EB] bg-opacity-85'>
             <div className='flex justify-between items-center w-full h-full'>
                 <div
                     className='relative flex flex-col mx-auto bg-[#FDF7EB] border-2 border-[#F4976C] rounded h-1/2 w-[95%]'>
-                    <div className='absolute -top-3 -left-3' onClick={handleCloseAddItemOpen}>
-                        <img src={CloseIcon} alt="icone" className="h-11 w-11"/>
+                    <div className='absolute -top-3 -left-3'
+                         onClick={handleCloseAddItemOpen}>
+                        <img src={CloseIcon} alt="icone" className="h-11 w-11" onClick={handleCloseAddItemOpen}/>
                     </div>
-                    <div className='w-[90%] mx-auto flex items-center justify-center pt-7 border-b border-[#F4976C]'>
+                    <div
+                        className='w-[90%] mx-auto flex items-center justify-center pt-7 border-b border-[#F4976C]'>
                         <p className='text-2xl text-[#F4976C] font-extrabold'>Adicione um Item a sua lista</p>
                     </div>
                     <div className='relative flex flex-col items-center justify-center h-full pb-20 gap-10'>

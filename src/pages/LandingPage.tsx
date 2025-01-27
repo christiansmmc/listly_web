@@ -1,29 +1,10 @@
 import EmptyCartIcon from '../assets/compras_vazio.png';
 import FullCartIcon from '../assets/compras_cheio.png';
 import BackgroundImage from '../assets/background.jpeg';
-import {createRoomFirstStepRequest} from "../api/roomApi.ts";
+import {useLocation} from "wouter";
 
-interface LandingPageProps {
-    setNewCartCode: (code: number[]) => void;
-    setIsNewCartProccess: (isProcess: boolean) => void;
-}
-
-const LandingPage = ({
-                         setNewCartCode,
-                         setIsNewCartProccess
-                     }: LandingPageProps) => {
-    const createCartFirstStep = () => {
-        createRoomFirstStepRequest()
-            .then(res => {
-                const code: number[] = res.code.split("").map(Number);
-
-                setNewCartCode(code);
-                setIsNewCartProccess(true)
-            })
-            .catch(error => {
-                console.error('Erro ao fazer a requisição:', error);
-            });
-    }
+const LandingPage = () => {
+    const [, setLocation] = useLocation();
 
     return (
         <div className='h-full' style={{backgroundImage: `url(${BackgroundImage})`}}>
@@ -36,7 +17,7 @@ const LandingPage = ({
             </div>
             <div className='w-full px-3 flex gap-5 mt-20'>
                 <div
-                    onClick={createCartFirstStep}
+                    onClick={() => setLocation("/create-room")}
                     className="shadow-md w-1/2 h-32 px-8 flex flex-col justify-center items-center bg-[#fdfaf2] rounded-lg border border-[#B48768] cursor-pointer
                                 transition transform hover:scale-[1.01] hover:shadow-lg active:scale-[0.99] active:shadow-sm">
                     <img src={EmptyCartIcon} alt="icone" className="h-10 w-10"/>
