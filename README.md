@@ -1,5 +1,6 @@
 # TODO
 
+- Criptografar senha salva no local storage
 - Tratativa de erros com toast
 - Adicionar loadings
 - Ao gerar codigo e voltar para landing page sem finalizar o cadastro salvar no localStorage o token para que n gere

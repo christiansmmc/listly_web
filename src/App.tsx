@@ -5,6 +5,7 @@ import LandingPage from "./pages/LandingPage.tsx";
 import CreateCartPage from "./pages/CreateCartPage.tsx";
 import CartPage from "./pages/CartPage.tsx";
 import {validateRoomRequest} from "./api/roomApi.ts";
+import {decrypt} from "./utils/securityUtils.ts";
 
 function App() {
     const [newCartCode, setNewCartCode] = useState<number[]>([0, 0, 0, 0]);
@@ -20,7 +21,7 @@ function App() {
         const localStorageData: LoggedInDataType = JSON.parse(data);
         const requestBody: ValidateRoomRequest = {
             code: localStorageData.roomCode || "",
-            passcode: localStorageData.roomPasscode || ""
+            passcode: decrypt(localStorageData.roomPasscode || "")
         };
 
         validateRoomRequest(requestBody)

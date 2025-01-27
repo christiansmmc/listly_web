@@ -3,6 +3,7 @@ import EmptyCartIcon from '../assets/compras_vazio.png';
 import LeftArrowIcon from '../assets/seta_esquerda_4.png';
 import BackgroundImage from '../assets/background.jpeg';
 import {createRoomLastStepRequest} from "../api/roomApi.ts";
+import {encrypt} from "../utils/securityUtils.ts";
 
 
 interface CreateCartPageProps {
@@ -35,7 +36,7 @@ const CreateCartPage = ({
             .then(() => {
                 const loggedInData: LoggedInDataType = {
                     roomCode: cartCode,
-                    roomPasscode: cartPasscode,
+                    roomPasscode: encrypt(cartPasscode),
                 }
 
                 setIsLoggedIn(true)

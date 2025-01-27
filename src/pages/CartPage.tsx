@@ -16,6 +16,7 @@ import AddItemModal from "../components/AddItemModal.tsx";
 import {capitalize} from "../utils/stringUtils.ts";
 import {getRoomData} from "../api/roomApi.ts";
 import {checkItemRequest, removeItemRequest} from "../api/itemApi.ts";
+import EditRoomModal from "../components/EditRoomModal.tsx";
 
 
 interface CartPageProps {
@@ -29,6 +30,7 @@ const CartPage = ({roomCode, roomPasscode, setLoggedInData, setIsLoggedIn}: Cart
     const [cartData, setCartData] = useState<GetCartDataResponse>()
     const [categoryGroup, setCategoryGroup] = useState<CategoryGroup[]>()
     const [isAddItemOpen, setIsAddItemOpen] = useState<boolean>(false);
+    const [isEditRoomOpen, setIsEditRoomOpen] = useState<boolean>(false);
 
     const getCartData = () => {
         getRoomData(roomCode, roomPasscode)
@@ -154,6 +156,11 @@ const CartPage = ({roomCode, roomPasscode, setLoggedInData, setIsLoggedIn}: Cart
         setIsAddItemOpen(false);
     }
 
+    const handleCloseEditRoomOpen = () => {
+        console.log("Asd")
+        setIsEditRoomOpen(false);
+    }
+
     return (
         <div className='h-full' style={{backgroundImage: `url(${BackgroundImage})`}}>
             {cartData ?
@@ -221,12 +228,20 @@ const CartPage = ({roomCode, roomPasscode, setLoggedInData, setIsLoggedIn}: Cart
                     </p>
                 </div>
                 <div className='flex justify-center items-center w-36 h-20 cursor-pointer'>
-                    <img src={ConfigIcon} alt="icone" className="h-10 w-10"/>
+                    <img src={ConfigIcon} alt="icone" className="h-10 w-10" onClick={() => setIsEditRoomOpen(true)}/>
                 </div>
             </div>
             {isAddItemOpen &&
-                <AddItemModal roomCode={roomCode} roomPasscode={roomPasscode} updateCart={updateCart}
+                <AddItemModal roomCode={roomCode}
+                              roomPasscode={roomPasscode}
+                              updateCart={updateCart}
                               handleCloseAddItemOpen={handleCloseAddItemOpen}/>}
+            {isEditRoomOpen &&
+                <EditRoomModal roomCode={roomCode}
+                               roomPasscode={roomPasscode}
+                               cartData={cartData}
+                               updateCart={updateCart}
+                               handleCloseEditRoomOpen={handleCloseEditRoomOpen}/>}
         </div>
     )
 }
