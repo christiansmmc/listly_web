@@ -1,4 +1,3 @@
-import {GetCartDataResponse} from "../types/global.ts";
 import CloseIcon from '../assets/erro.png'
 import {useState} from "react";
 import CopyIcon from "../assets/copia-de.png";
@@ -8,7 +7,6 @@ import DeleteIcon from "../assets/lixo.png";
 interface EditRoomModal {
     roomCode: string | undefined;
     roomPasscode: string | undefined;
-    cartData: GetCartDataResponse | undefined;
     updateCart: VoidFunction;
     handleCloseEditRoomOpen: VoidFunction;
 }
@@ -16,7 +14,6 @@ interface EditRoomModal {
 const EditRoomModal = ({
                            roomCode,
                            roomPasscode,
-                           cartData,
                            handleCloseEditRoomOpen
                        }: EditRoomModal) => {
     const [roomName, setRoomName] = useState<string>("");
@@ -51,7 +48,7 @@ const EditRoomModal = ({
                         <div className='relative w-full flex flex-col justify-center items-center gap-2'>
                             <div className='text-2xl'>Nome da lista de compras</div>
                             <input
-                                placeholder={cartData?.name || "Lista de compras"}
+                                placeholder={"Lista de compras"}
                                 className='w-3/4 h-8 pl-1 text-center'
                                 onChange={(e) => handleRoomName(e.target.value)}
                                 value={roomName}/>

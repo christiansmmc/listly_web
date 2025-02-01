@@ -1,5 +1,6 @@
 import {
-    CategoryGroup,
+    FormatedCategoryDataType,
+    FormatedRoomDataType,
     GetCartDataResponse,
     ItemGetCartDataResponse,
     LoggedInDataType,
@@ -34,99 +35,93 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
     const {roomCode, roomPasscode, setRoomPasscode, setRoomCode} = useRoomData();
     const {isLoggedIn, setIsLoggedIn} = useAuthData();
 
-    const [cartData, setCartData] = useState<GetCartDataResponse>()
-    const [categoryGroup, setCategoryGroup] = useState<CategoryGroup[]>()
+    const [formatedRoomData, setFormatedRoomData] = useState<FormatedRoomDataType>();
     const [isAddItemOpen, setIsAddItemOpen] = useState<boolean>(false);
     const [isEditRoomOpen, setIsEditRoomOpen] = useState<boolean>(false);
 
+    const [pendingCheckRequests, setPendingCheckRequests] = useState(new Set<number>());
+
     const getCartData = () => {
         getRoomData(roomCode, roomPasscode)
-            .then(res => {
-                const groupedItems: CategoryGroup[] = Object.values(res.items.reduce((acc: Record<number, CategoryGroup>, item: ItemGetCartDataResponse) => {
-                    const {id: categoryId, name: categoryName} = item.category;
-                    if (!acc[categoryId]) {
-                        acc[categoryId] = {
-                            categoryId,
-                            categoryName,
-                            items: []
-                        };
-                    }
+            .then((res: GetCartDataResponse) => {
+                const categoryMap = new Map<number, FormatedCategoryDataType>();
 
-                    acc[categoryId].items.push({
+                res.items.forEach((item: ItemGetCartDataResponse) => {
+                    if (!categoryMap.has(item.category.id)) {
+                        categoryMap.set(item.category.id, {
+                            id: item.category.id,
+                            name: item.category.name,
+                            items: []
+                        });
+                    }
+                    categoryMap.get(item.category.id)!.items.push({
                         id: item.id,
                         name: item.name,
                         checked: item.checked
                     });
+                });
 
-                    return acc;
-                }, {}));
-
-                setCartData(res);
-                setCategoryGroup(groupedItems)
+                setFormatedRoomData({
+                    name: res.name,
+                    categories: Array.from(categoryMap.values())
+                });
             })
             .catch(error => {
                 console.error('Erro ao fazer a requisição:', error);
             });
-    }
+    };
 
     const checkItem = (itemId: number) => {
-        const cartDataBackup = structuredClone(cartData);
-        const categoryGroupBackup = structuredClone(categoryGroup);
+        if (pendingCheckRequests.has(itemId)) return;
+        setPendingCheckRequests((prev) => new Set(prev).add(itemId));
 
-        setCartData((prevCartData) => {
-            if (!prevCartData) return prevCartData;
+        setFormatedRoomData((prevData) => {
+            if (!prevData) return prevData;
 
-            const updatedItems = prevCartData.items.map((item) =>
-                item.id === itemId ? {...item, checked: !item.checked} : item
-            );
-
-            return {...prevCartData, items: updatedItems};
-        });
-
-        setCategoryGroup((prevCategoryGroup) => {
-            if (!prevCategoryGroup) return prevCategoryGroup;
-
-            return prevCategoryGroup.map((category) => {
-                const updatedItems = category.items.map((item) =>
-                    item.id === itemId ? {...item, checked: !item.checked} : item
-                );
-
-                return {...category, items: updatedItems};
-            });
+            return {
+                ...prevData,
+                categories: prevData.categories.map((category) => ({
+                    ...category,
+                    items: category.items.map((item) =>
+                        item.id === itemId ? {...item, checked: !item.checked} : item
+                    ),
+                })),
+            };
         });
 
         checkItemRequest(roomCode, roomPasscode, itemId)
-            .catch(error => {
-                setCartData(cartDataBackup)
-                setCategoryGroup(categoryGroupBackup)
-                console.error('Erro ao fazer a requisição:', error);
+            .then(() => {
+                setPendingCheckRequests((prev) => {
+                    const newSet = new Set(prev);
+                    newSet.delete(itemId);
+                    return newSet;
+                });
+            })
+            .catch((error) => {
+                console.error("Erro ao fazer a requisição:", error);
+                getCartData();
             });
-    }
+    };
 
     const removeItem = (itemId: number) => {
         removeItemRequest(roomCode, roomPasscode, itemId)
             .then(() => {
-                setCartData((prevCartData) => {
-                    if (!prevCartData) return prevCartData;
+                setFormatedRoomData((prevData) => {
+                    if (!prevData) return prevData;
 
-                    const updatedItems = prevCartData.items.filter((item) => item.id !== itemId);
-
-                    return {...prevCartData, items: updatedItems};
-                });
-
-                setCategoryGroup((prevCategoryGroup) => {
-                    if (!prevCategoryGroup) return prevCategoryGroup;
-
-                    return prevCategoryGroup
-                        .map((category) => {
-                            const updatedItems = category.items.filter((item) => item.id !== itemId);
-                            return {...category, items: updatedItems};
-                        })
-                        .filter((category) => category.items.length > 0); // Remove categorias vazias
+                    return {
+                        ...prevData,
+                        categories: prevData.categories
+                            .map((category) => ({
+                                ...category,
+                                items: category.items.filter((item) => item.id !== itemId),
+                            }))
+                            .filter((category) => category.items.length > 0),
+                    };
                 });
             })
             .catch((error) => {
-                console.error('Erro ao fazer a requisição:', error);
+                console.error("Erro ao fazer a requisição:", error);
             });
     };
 
@@ -230,12 +225,12 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
 
     return (
         <div className='h-full' style={{backgroundImage: `url(${BackgroundImage})`}}>
-            {cartData ?
+            {formatedRoomData ?
                 (
                     <div
                         className="fixed top-0 left-0 w-full h-24 flex items-center justify-center bg-[#FDF7EB]">
                         <div className='relative flex items-center justify-center border-b border-[#F4976C] w-[90%]'>
-                            <p className='text-4xl font-extrabold text-[#F4976C]'>{cartData?.name}</p>
+                            <p className='text-4xl font-extrabold text-[#F4976C]'>{formatedRoomData.name}</p>
                         </div>
                     </div>
                 ) : <div
@@ -243,22 +238,22 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
                 </div>
             }
             <div className="flex flex-col gap-2 pt-28 h-[calc(100vh-96px)] overflow-y-auto">
-                {cartData != null && cartData.items.length <= 0 && (
+                {formatedRoomData != null && formatedRoomData.categories.length <= 0 && (
                     <div className='flex justify-center items-center p-4 bg-[#FDF7EB] bg-opacity-75 w-[95%] rounded'>
                         <p className='text-2xl font-extrabold text-[#F4976C]'>
                             Adicione itens no seu carrinho para aparecerem aqui!
                         </p>
                     </div>
                 )}
-                {categoryGroup?.map(category => {
+                {formatedRoomData?.categories.map(category => {
                     return (
                         <div
-                            key={category.categoryId}
+                            key={category.id}
                             className="bg-[#FDF7EB] bg-opacity-95 w-[98%] rounded mx-auto py-3 border-2 border-[#F3E0C2]">
                             <div className='flex items-center gap-6 p-5 pl-7 '>
-                                <img src={getCategoryIcon(category.categoryName)} alt="icone" className="h-9 w-9"/>
+                                <img src={getCategoryIcon(category.name)} alt="icone" className="h-9 w-9"/>
                                 <div
-                                    className='text-2xl font-extrabold text-[#F4976C] border-b border-[#F4976C] w-[80%]'>{category.categoryName}</div>
+                                    className='text-2xl font-extrabold text-[#F4976C] border-b border-[#F4976C] w-[80%]'>{category.name}</div>
                             </div>
                             <div className='flex flex-col gap-1'>
                                 {category.items.map(item => {
@@ -307,7 +302,6 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
             {isEditRoomOpen &&
                 <EditRoomModal roomCode={roomCode}
                                roomPasscode={roomPasscode}
-                               cartData={cartData}
                                updateCart={updateCart}
                                handleCloseEditRoomOpen={handleCloseEditRoomOpen}/>}
         </div>

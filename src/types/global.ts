@@ -32,18 +32,6 @@ export interface GetCartDataResponse {
     items: ItemGetCartDataResponse[],
 }
 
-export interface ItemsCategoryGroup {
-    id: number,
-    name: string,
-    checked: boolean,
-}
-
-export interface CategoryGroup {
-    categoryId: number,
-    categoryName: string,
-    items: ItemsCategoryGroup[]
-}
-
 export interface ListCategoryResponse {
     id: number,
     name: string,
@@ -63,4 +51,21 @@ export interface AuthHeader extends AxiosRequestConfig {
     headers: {
         'X-Room-Passcode': string;
     };
+}
+
+export interface FormatedItemDataType {
+    id: number,
+    name: string,
+    checked: boolean,
+}
+
+export interface FormatedCategoryDataType {
+    id: number,
+    name: string,
+    items: FormatedItemDataType[]
+}
+
+export interface FormatedRoomDataType {
+    name: string
+    categories: FormatedCategoryDataType[]
 }
