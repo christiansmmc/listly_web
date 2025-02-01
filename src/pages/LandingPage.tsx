@@ -23,7 +23,9 @@ const LandingPage = () => {
                     <img src={EmptyCartIcon} alt="icone" className="h-10 w-10"/>
                     <p className="text-lg text-center">Criar lista de compras</p>
                 </div>
-                <div className="shadow-md w-1/2 h-32 px-8 flex flex-col justify-center items-center bg-[#fdfaf2] rounded-lg border border-[#B48768] cursor-pointer
+                <div
+                    onClick={() => setLocation("/login-room")}
+                    className="shadow-md w-1/2 h-32 px-8 flex flex-col justify-center items-center bg-[#fdfaf2] rounded-lg border border-[#B48768] cursor-pointer
                             transition transform hover:scale-[1.01] hover:shadow-lg active:scale-[0.99] active:shadow-sm">
                     <img src={FullCartIcon} alt="icone" className="h-10 w-10"/>
                     <p className='text-lg text-center'>Acessar lista de compras</p>

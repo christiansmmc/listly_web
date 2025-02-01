@@ -9,6 +9,7 @@ import CartPage from "./pages/CartPage.tsx";
 import CreateCartPage from "./pages/CreateCartPage.tsx";
 import {useRoomData} from "./context/RoomContext.tsx";
 import {useAuthData} from "./context/AuthContext.tsx";
+import LoginCartPage from "./pages/LoginCartPage.tsx";
 
 function App() {
     const {setRoomCode, setRoomPasscode} = useRoomData();
@@ -45,6 +46,9 @@ function App() {
             </Route>
             <Route path="/create-room">
                 {() => <CreateCartPage/>}
+            </Route>
+            <Route path="/login-room">
+                {() => <LoginCartPage/>}
             </Route>
             <Route path="/room/:roomCode">
                 {({roomCode}) => <CartPage urlRoomCode={roomCode}/>}

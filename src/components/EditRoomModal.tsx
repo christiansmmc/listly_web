@@ -41,7 +41,12 @@ const EditRoomModal = ({
                 <div
                     className='relative flex flex-col mx-auto bg-[#FDF7EB] border-2 border-[#F4976C] rounded h-1/2 w-[95%]'>
                     <div className='absolute -top-3 -left-3' onClick={handleCloseEditRoomOpen}>
-                        <img src={CloseIcon} alt="icone" className="h-11 w-11"/>
+                        <img
+                            src={CloseIcon}
+                            alt="icone"
+                            className="h-11 w-11"
+                            onClick={handleCloseEditRoomOpen}
+                        />
                     </div>
                     <div className='relative flex flex-col items-center justify-center h-full pb-20 gap-10'>
                         <div className='relative w-full flex flex-col justify-center items-center gap-2'>
