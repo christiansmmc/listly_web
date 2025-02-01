@@ -17,7 +17,6 @@ const EditRoomModal = ({
                            roomCode,
                            roomPasscode,
                            cartData,
-                           updateCart,
                            handleCloseEditRoomOpen
                        }: EditRoomModal) => {
     const [roomName, setRoomName] = useState<string>("");
