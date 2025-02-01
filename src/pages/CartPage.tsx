@@ -70,31 +70,35 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
     }
 
     const checkItem = (itemId: number) => {
+        const cartDataBackup = structuredClone(cartData);
+        const categoryGroupBackup = structuredClone(categoryGroup);
+
+        setCartData((prevCartData) => {
+            if (!prevCartData) return prevCartData;
+
+            const updatedItems = prevCartData.items.map((item) =>
+                item.id === itemId ? {...item, checked: !item.checked} : item
+            );
+
+            return {...prevCartData, items: updatedItems};
+        });
+
+        setCategoryGroup((prevCategoryGroup) => {
+            if (!prevCategoryGroup) return prevCategoryGroup;
+
+            return prevCategoryGroup.map((category) => {
+                const updatedItems = category.items.map((item) =>
+                    item.id === itemId ? {...item, checked: !item.checked} : item
+                );
+
+                return {...category, items: updatedItems};
+            });
+        });
+
         checkItemRequest(roomCode, roomPasscode, itemId)
-            .then(() => {
-                setCartData((prevCartData) => {
-                    if (!prevCartData) return prevCartData;
-
-                    const updatedItems = prevCartData.items.map((item) =>
-                        item.id === itemId ? {...item, checked: !item.checked} : item
-                    );
-
-                    return {...prevCartData, items: updatedItems};
-                });
-
-                setCategoryGroup((prevCategoryGroup) => {
-                    if (!prevCategoryGroup) return prevCategoryGroup;
-
-                    return prevCategoryGroup.map((category) => {
-                        const updatedItems = category.items.map((item) =>
-                            item.id === itemId ? {...item, checked: !item.checked} : item
-                        );
-
-                        return {...category, items: updatedItems};
-                    });
-                });
-            })
             .catch(error => {
+                setCartData(cartDataBackup)
+                setCategoryGroup(categoryGroupBackup)
                 console.error('Erro ao fazer a requisição:', error);
             });
     }
