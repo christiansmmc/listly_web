@@ -2,7 +2,7 @@ import CryptoJS from 'crypto-js';
 
 const SECRET_KEY = 'my-very-secure-key';
 
-export function encrypt(plaintext: string | undefined): string {
+export const encrypt = (plaintext: string | undefined) => {
     if (plaintext == undefined) {
         return "";
     }
@@ -16,7 +16,7 @@ export function encrypt(plaintext: string | undefined): string {
     }
 }
 
-export function decrypt(ciphertext: string | undefined): string {
+export const decrypt = (ciphertext: string | undefined) => {
     if (ciphertext == undefined) {
         return "";
     }
@@ -31,3 +31,8 @@ export function decrypt(ciphertext: string | undefined): string {
     }
 }
 
+export const getAuthHeader = (roomPasscode: string | undefined) => {
+    return {
+        headers: {'X-Room-Passcode': decrypt(roomPasscode)}
+    }
+}

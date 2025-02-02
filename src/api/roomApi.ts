@@ -1,4 +1,4 @@
-import {AuthHeader, CreateCartFirstStepResponse, GetCartDataResponse, ValidateRoomRequest} from "../types/global.ts";
+import {AuthHeader, CreateCartFirstStepResponse, GetRoomDataResponseType, ValidateRoomRequest} from "../types/global.ts";
 import api from "./axiosConfig.ts";
 import {decrypt} from "../utils/securityUtils.ts";
 
@@ -17,7 +17,7 @@ export const validateRoomRequest = async (requestBody: ValidateRoomRequest) => {
     await api.post(`/rooms/validate`, requestBody);
 }
 
-export const getRoomData = async (roomCode: string | undefined, roomPasscode: string | undefined): Promise<GetCartDataResponse> => {
+export const getRoomData = async (roomCode: string | undefined, roomPasscode: string | undefined): Promise<GetRoomDataResponseType> => {
     const header: AuthHeader = {
         headers: {'X-Room-Passcode': decrypt(roomPasscode)}
     }

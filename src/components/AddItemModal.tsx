@@ -2,39 +2,33 @@ import {useEffect, useState} from "react";
 import {AddItemRequest, ListCategoryResponse} from "../types/global.ts";
 import CloseIcon from '../assets/erro.png'
 import {getCategories} from "../api/categoryApi.ts";
-import {createItemRequest} from "../api/itemApi.ts";
+import {useAddRoomItemMutate} from "../api/room/query.ts";
 
 interface AddItemModalProps {
-    roomCode: string | undefined;
-    roomPasscode: string | undefined;
-    updateCart: () => void;
+    roomCode: string;
+    roomPasscode: string;
     handleCloseAddItemOpen: () => void;
 }
 
 const AddItemModal = ({
                           roomCode,
                           roomPasscode,
-                          updateCart,
                           handleCloseAddItemOpen
                       }: AddItemModalProps) => {
     const [categories, setCategories] = useState<ListCategoryResponse[]>([])
     const [item, setItem] = useState<AddItemRequest>({})
 
+    const {mutate} = useAddRoomItemMutate();
+
+    const handleAddItem = () => {
+        mutate({item, roomCode, roomPasscode});
+        handleCloseAddItemOpen()
+    };
+
     const listCategories = () => {
         getCategories(roomPasscode)
             .then(res => {
                 setCategories(res);
-            })
-            .catch(error => {
-                console.error('Erro ao fazer a requisição:', error);
-            });
-    }
-
-    const addItem = () => {
-        createItemRequest(item, roomCode, roomPasscode)
-            .then(() => {
-                updateCart()
-                handleCloseAddItemOpen()
             })
             .catch(error => {
                 console.error('Erro ao fazer a requisição:', error);
@@ -98,7 +92,7 @@ const AddItemModal = ({
                             </select>
                         </div>
                         <div className='absolute bottom-5 py-2 px-10 border bg-[#F4976C]'>
-                            <div className='text-2xl' onClick={addItem}>Adicionar</div>
+                            <div className='text-2xl' onClick={handleAddItem}>Adicionar</div>
                         </div>
                     </div>
                 </div>

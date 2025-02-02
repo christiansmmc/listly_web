@@ -26,7 +26,7 @@ export interface ItemGetCartDataResponse {
     category: CategoryResponse
 }
 
-export interface GetCartDataResponse {
+export interface GetRoomDataResponseType {
     name: string,
     code: string,
     items: ItemGetCartDataResponse[],

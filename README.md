@@ -16,3 +16,5 @@
     - Modal de config com problema ao fechar
 
 - Atualizar tela de criar lista de compras com OTP INPUT
+
+- Trocar security key do securityUtils

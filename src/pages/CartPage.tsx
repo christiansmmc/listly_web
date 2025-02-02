@@ -1,11 +1,4 @@
-import {
-    FormatedCategoryDataType,
-    FormatedRoomDataType,
-    GetCartDataResponse,
-    ItemGetCartDataResponse,
-    LoggedInDataType,
-    ValidateRoomRequest
-} from "../types/global.ts";
+import {FormatedRoomDataType, LoggedInDataType, ValidateRoomRequest} from "../types/global.ts";
 import {useEffect, useState} from "react";
 import BackgroundImage from "../assets/background.jpeg";
 import FruitIcon from "../assets/maca.png";
@@ -21,13 +14,25 @@ import LeftArrowIcon from "../assets/resposta.png";
 import ConfigIcon from "../assets/definicoes.png";
 import AddItemModal from "../components/AddItemModal.tsx";
 import {capitalize} from "../utils/stringUtils.ts";
-import {getRoomData, validateRoomRequest} from "../api/roomApi.ts";
 import {checkItemRequest, removeItemRequest} from "../api/itemApi.ts";
 import EditRoomModal from "../components/EditRoomModal.tsx";
 import {useAuthData} from "../context/AuthContext.tsx";
 import {useLocation} from "wouter";
-import {decrypt} from "../utils/securityUtils.ts";
 import {useRoomData} from "../context/RoomContext.tsx";
+import {useGetRoomDataQuery} from "../api/room/query.ts";
+import {decrypt} from "../utils/securityUtils.ts";
+import {validateRoomRequest} from "../api/roomApi.ts";
+
+const categoryIcons: Record<string, string> = {
+    "Frutas": FruitIcon,
+    "Legumes e Verduras": VegetableIcon,
+    "Proteínas": ProteinIcon,
+    "Bebidas": DrinkIcon,
+    "Pães e Massas": BreadIcon,
+    "Temperos e Especiarias": SaltIcon,
+    "Higiene Pessoal": ToiletIcon,
+    "Produtos de Limpeza": CleanIcon
+};
 
 const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
     const [, setLocation] = useLocation();
@@ -41,35 +46,10 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
 
     const [pendingCheckRequests, setPendingCheckRequests] = useState(new Set<number>());
 
-    const getCartData = () => {
-        getRoomData(roomCode, roomPasscode)
-            .then((res: GetCartDataResponse) => {
-                const categoryMap = new Map<number, FormatedCategoryDataType>();
-
-                res.items.forEach((item: ItemGetCartDataResponse) => {
-                    if (!categoryMap.has(item.category.id)) {
-                        categoryMap.set(item.category.id, {
-                            id: item.category.id,
-                            name: item.category.name,
-                            items: []
-                        });
-                    }
-                    categoryMap.get(item.category.id)!.items.push({
-                        id: item.id,
-                        name: item.name,
-                        checked: item.checked
-                    });
-                });
-
-                setFormatedRoomData({
-                    name: res.name,
-                    categories: Array.from(categoryMap.values())
-                });
-            })
-            .catch(error => {
-                console.error('Erro ao fazer a requisição:', error);
-            });
-    };
+    const {
+        data,
+        refetch
+    } = useGetRoomDataQuery(roomCode, roomPasscode);
 
     const checkItem = (itemId: number) => {
         if (pendingCheckRequests.has(itemId)) return;
@@ -99,7 +79,6 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
             })
             .catch((error) => {
                 console.error("Erro ao fazer a requisição:", error);
-                getCartData();
             });
     };
 
@@ -125,77 +104,27 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
             });
     };
 
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const urlRoomPasscode = params.get("roomPasscode");
-
-        if (params.size > 0 && urlRoomPasscode) {
-            try {
-                validateRoom(urlRoomCode, urlRoomPasscode);
-                setLocation(`/room/${urlRoomCode}`)
-                return;
-            } catch {
-                handleLogout()
-                return;
-            }
-        }
-
-        if (isLoggedIn && roomCode && roomPasscode) {
-            if (roomCode !== urlRoomCode) {
-                handleLogout();
-            } else {
-                validateRoom(roomCode, roomPasscode);
-                getCartData();
-            }
-        } else if (!isLoggedIn) {
-            const data = localStorage.getItem("data");
-            if (data) {
-                const localStorageData: LoggedInDataType = JSON.parse(data);
-                validateRoom(
-                    localStorageData.roomCode || "",
-                    localStorageData.roomPasscode || ""
-                );
-            }
-        } else {
-            console.log("AQUI 3");
-            handleLogout()
-        }
-    }, [isLoggedIn, roomCode, roomPasscode]);
-
-    const validateRoom = (roomCode: string, roomPasscode: string) => {
+    const validateRoom = async (roomCode: string, roomPasscode: string) => {
         const requestBody: ValidateRoomRequest = {
             code: roomCode,
             passcode: decrypt(roomPasscode),
         };
 
         try {
-            validateRoomRequest(requestBody)
-                .then(() => {
-                    setRoomCode(roomCode);
-                    setRoomPasscode(roomPasscode);
-                    setIsLoggedIn(true);
+            await validateRoomRequest(requestBody);
+            setRoomCode(roomCode);
+            setRoomPasscode(roomPasscode);
+            setIsLoggedIn(true);
 
-                    const loggedInData: LoggedInDataType = {
-                        roomCode: roomCode,
-                        roomPasscode: roomPasscode,
-                    };
-                    localStorage.setItem("data", JSON.stringify(loggedInData));
-                });
+            const loggedInData: LoggedInDataType = {
+                roomCode: roomCode,
+                roomPasscode: roomPasscode,
+            };
+            localStorage.setItem("data", JSON.stringify(loggedInData));
         } catch (error) {
             console.error("Erro na validação da sala:", error);
-            setLocation("/");
+            handleLogout();
         }
-    };
-
-    const categoryIcons: Record<string, string> = {
-        "Frutas": FruitIcon,
-        "Legumes e Verduras": VegetableIcon,
-        "Proteínas": ProteinIcon,
-        "Bebidas": DrinkIcon,
-        "Pães e Massas": BreadIcon,
-        "Temperos e Especiarias": SaltIcon,
-        "Higiene Pessoal": ToiletIcon,
-        "Produtos de Limpeza": CleanIcon
     };
 
     const getCategoryIcon = (categoryName: string): string => {
@@ -212,7 +141,7 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
     }
 
     const updateCart = () => {
-        getCartData()
+        refetch()
     }
 
     const handleCloseAddItemOpen = () => {
@@ -222,6 +151,66 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
     const handleCloseEditRoomOpen = () => {
         setIsEditRoomOpen(false);
     }
+
+    useEffect(() => {
+        const checkRoomStatus = async () => {
+            const params = new URLSearchParams(window.location.search);
+            const urlRoomPasscode = params.get("roomPasscode");
+
+            // Caso haja parâmetros na URL (login via URL)
+            if (params.size > 0 && urlRoomPasscode) {
+                localStorage.clear();
+                try {
+                    await validateRoom(urlRoomCode, urlRoomPasscode);
+                    setLocation(`/room/${urlRoomCode}`);
+                } catch {
+                    handleLogout();
+                }
+                return;
+            }
+
+            // Se estiver logado e os dados da sala estiverem disponíveis
+            if (isLoggedIn && roomCode && roomPasscode) {
+                if (roomCode !== urlRoomCode) {
+                    handleLogout();
+                } else {
+                    try {
+                        await validateRoom(roomCode, roomPasscode);
+                        refetch();
+                    } catch {
+                        handleLogout();
+                    }
+                }
+                return;
+            }
+
+            // Se não estiver logado, tenta recuperar os dados do localStorage
+            if (!isLoggedIn) {
+                const data = localStorage.getItem("data");
+                if (data) {
+                    const localStorageData: LoggedInDataType = JSON.parse(data);
+                    try {
+                        await validateRoom(
+                            localStorageData.roomCode || "",
+                            localStorageData.roomPasscode || ""
+                        );
+                    } catch {
+                        handleLogout();
+                    }
+                } else {
+                    handleLogout();
+                }
+            }
+        };
+
+        checkRoomStatus();
+    }, [isLoggedIn, roomCode, roomPasscode]);
+
+    useEffect(() => {
+        if (data) {
+            setFormatedRoomData(data);
+        }
+    }, [data, setFormatedRoomData]);
 
     return (
         <div className='h-full' style={{backgroundImage: `url(${BackgroundImage})`}}>
@@ -295,9 +284,8 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
                 </div>
             </div>
             {isAddItemOpen &&
-                <AddItemModal roomCode={roomCode}
-                              roomPasscode={roomPasscode}
-                              updateCart={updateCart}
+                <AddItemModal roomCode={roomCode || ""}
+                              roomPasscode={roomPasscode || ""}
                               handleCloseAddItemOpen={handleCloseAddItemOpen}/>}
             {isEditRoomOpen &&
                 <EditRoomModal roomCode={roomCode}
