@@ -18,3 +18,7 @@
 - Atualizar tela de criar lista de compras com OTP INPUT
 
 - Trocar security key do securityUtils
+
+- Loop infinito de request no /validate ao criar sala e ser redirecionado
+
+- Aplicar React query optimistic ou algo parecido no processo de adicionar item / remover item
