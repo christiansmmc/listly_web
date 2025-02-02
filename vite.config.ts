@@ -1,7 +1,12 @@
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
+import dotenv from 'dotenv';
 
-// https://vite.dev/config/
+dotenv.config();
+
 export default defineConfig({
-  plugins: [react()],
+    plugins: [react()],
+    define: {
+        'process.env.PASSCODE_SECRET_KEY': JSON.stringify(process.env.PASSCODE_SECRET_KEY),
+    },
 })
