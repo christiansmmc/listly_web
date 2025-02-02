@@ -1,7 +1,6 @@
 import CryptoJS from 'crypto-js';
-import * as process from "node:process";
 
-const SECRET_KEY = process.env.SECRET_KEY || 'my-secret-key';
+const SECRET_KEY = 'my-secret-key';
 
 export const encrypt = (plaintext: string | undefined) => {
     if (plaintext == undefined) {

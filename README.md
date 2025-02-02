@@ -20,3 +20,5 @@
 - Loop infinito de request no /validate ao criar sala e ser redirecionado
 
 - Aplicar React query optimistic ou algo parecido no processo de adicionar item / remover item
+
+- Autenticacao por token

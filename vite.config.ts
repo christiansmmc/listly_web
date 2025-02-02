@@ -6,7 +6,4 @@ dotenv.config();
 
 export default defineConfig({
     plugins: [react()],
-    define: {
-        'process.env.PASSCODE_SECRET_KEY': JSON.stringify(process.env.PASSCODE_SECRET_KEY),
-    },
 })
