@@ -31,7 +31,8 @@ function App() {
                 setIsLoggedIn(true)
 
                 setLocation(`/room/${requestBody.code}`)
-            });
+            })
+            .catch(() => localStorage.clear());
     }
 
     useEffect(() => {
