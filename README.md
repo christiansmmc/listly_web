@@ -22,3 +22,5 @@
 - Aplicar React query optimistic ou algo parecido no processo de adicionar item / remover item
 
 - Autenticacao por token
+
+- Salvar dados em cookies?

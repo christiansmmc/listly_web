@@ -7,6 +7,7 @@ import {
 } from "../../types/global.ts";
 import {getAuthHeader} from "../../utils/securityUtils.ts";
 import api from "../axiosConfig.ts";
+import {ValidateRoomRequestType, ValidateRoomResponseType} from "../interfaces/room.ts";
 
 export const getRoomDataRequest = async (
     roomCode: string | undefined,
@@ -43,4 +44,9 @@ export const addRoomItemRequest = async (
     roomPasscode: string | undefined
 ) => {
     await api.post(`/rooms/${roomCode}/items`, item, getAuthHeader(roomPasscode));
+};
+
+export const validateRoomRequest = async (requestBody: ValidateRoomRequestType): Promise<ValidateRoomResponseType> => {
+    const {data} = await api.post(`/rooms/validate`, requestBody);
+    return data;
 };
