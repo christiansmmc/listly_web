@@ -10,16 +10,9 @@
 - Tela da lista de compras
     - Procurar icone para cada categoria
 
-    - Atualizar requests para usar react query, assim ele atualiza dps de um tempo a lista, caso 2 ou mais pessoas mexem
-      ao mesmo tempo, sera atualizado para elas em tempo real
-
     - Modal de config com problema ao fechar
 
-- Atualizar tela de criar lista de compras com OTP INPUT
-
 - Loop infinito de request no /validate ao criar sala e ser redirecionado
-
-- Aplicar React query optimistic ou algo parecido no processo de adicionar item / remover item
 
 - Aplicar Toast e logout no caso de erro em requests no react query
 
