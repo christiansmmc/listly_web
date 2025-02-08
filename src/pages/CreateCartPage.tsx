@@ -6,10 +6,11 @@ import {useAuthData} from "../context/AuthContext.tsx";
 import {useLocation} from "wouter";
 import {useRoomData} from "../context/RoomContext.tsx";
 import {useCreateRoomFirstStepMutate, useCreateRoomLastStepMutate, useValidateRoomMutate} from "../api/room/query.ts";
+import OTPInput from "react-otp-input";
 
 const CreateCartPage = () => {
-    const [newCartCode, setNewCartCode] = useState<number[]>([]);
-    const [newCartPasscode, setNewCartPasscode] = useState<number[]>([0, 0, 0, 0]);
+    const [newCartCode, setNewCartCode] = useState('');
+    const [newCartPasscode, setNewCartPasscode] = useState('');
 
     const [, setLocation] = useLocation();
 
@@ -22,31 +23,17 @@ const CreateCartPage = () => {
 
     const createCartFirstStep = async () => {
         const createRoomFirstStepResponse = await createRoomFirstStepMutate()
-        const code = createRoomFirstStepResponse.code.split("").map(Number)
-        setNewCartCode(code);
+        setNewCartCode(createRoomFirstStepResponse.code);
     }
 
     const createCartLastStep = async () => {
-        const createdRoomCode = newCartCode.join("");
-        const createdRoomPasscode = newCartPasscode.join("");
+        await createRoomLastStepMutate({roomCode: newCartCode, roomPasscode: newCartPasscode});
 
-        await createRoomLastStepMutate({roomCode: createdRoomCode, roomPasscode: createdRoomPasscode});
-
-        setRoomCode(createdRoomCode);
+        setRoomCode(newCartCode);
         setIsLoggedIn(true)
 
-        await validateRoomMutate({roomCode: createdRoomCode, roomPasscode: createdRoomPasscode});
+        await validateRoomMutate({roomCode: newCartCode, roomPasscode: newCartPasscode});
     }
-
-    const handleInputChange = (value: number, index: number) => {
-        const newPasscode = [...newCartPasscode];
-        newPasscode[index] = value;
-        setNewCartPasscode(newPasscode);
-
-        if (value && index < newCartPasscode.length - 1) {
-            document.getElementById(`input-${index + 1}`)?.focus();
-        }
-    };
 
     useEffect(() => {
         createCartFirstStep()
@@ -62,30 +49,42 @@ const CreateCartPage = () => {
                     className='w-[90%] mt-10 flex flex-col items-center gap-5 bg-[#fdfaf2] bg-opacity-95 py-12 border border-[#B48768] rounded '>
                     <p className='text-2xl text-center font-semibold text-[#F4976C]'>Código da sua nova lista de
                         compras</p>
-                    <div className='flex gap-2'>
-                        {newCartCode.map(num => {
-                            return <p
-                                className='flex items-center justify-center text-3xl rounded bg-white w-10 h-14'>{num}</p>
-                        })}
-                    </div>
+                    <OTPInput
+                        onChange={() => {
+                        }}
+                        value={newCartCode}
+                        numInputs={4}
+                        renderSeparator={<span className="mx-1"> </span>}
+                        inputStyle={{width: '40px'}}
+                        renderInput={(props) => (
+                            <input
+                                {...props}
+                                disabled={true}
+                                className='text-3xl text-center rounded disabled:bg-white h-14 border border-gray-300 focus:outline-none focus:ring-2 focus:[#A9DEF9] disabled:cursor-not-allowed'
+                            />
+                        )}
+                    />
+
                 </div>
                 <div
                     className='w-[90%] flex flex-col items-center gap-5 bg-[#fdfaf2] bg-opacity-95 py-12 border border-[#B48768] rounded '>
                     <p className='text-2xl text-center font-semibold text-[#F4976C]'>Digite a senha para acessar sua
                         lista de compras</p>
-                    <div className='flex gap-2'>
-                        {newCartPasscode.map((num, index) => (
+                    <OTPInput
+                        placeholder={'0000'}
+                        value={newCartPasscode}
+                        onChange={setNewCartPasscode}
+                        numInputs={4}
+                        shouldAutoFocus
+                        renderSeparator={<span className="mx-1"></span>}
+                        inputStyle={{'width': '40px'}}
+                        renderInput={(props) => (
                             <input
-                                key={index}
-                                id={`input-${index}`}
-                                type="number"
-                                maxLength={1}
-                                placeholder={num.toString()}
-                                onChange={(e) => handleInputChange(Number(e.target.value), index)}
-                                className='flex items-center justify-center text-3xl text-center rounded bg-white w-10 h-14 border border-gray-300 focus:outline-none focus:ring-2 focus:[#A9DEF9]'
+                                {...props}
+                                className='text-3xl text-center rounded bg-white h-14 border border-gray-300 focus:outline-none focus:ring-2 focus:[#A9DEF9]'
                             />
-                        ))}
-                    </div>
+                        )}
+                    />
                 </div>
             </div>
             <div className='absolute bottom-10 h-16 w-full flex items-center justify-center px-2 gap-2'>
