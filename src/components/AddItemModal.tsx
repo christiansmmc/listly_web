@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {AddItemDTO, AddItemRequest, ListCategoryResponse} from "../types/global.ts";
+import {AddItemDTO, ListCategoryResponse} from "../types/global.ts";
 import CloseIcon from '../assets/erro.png'
 import {useAddRoomItemMutate} from "../api/item/query.ts";
 import {useGetCategoriesQuery} from "../api/category/query.ts";
