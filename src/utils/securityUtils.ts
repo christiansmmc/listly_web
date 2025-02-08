@@ -36,3 +36,13 @@ export const getAuthHeader = (roomPasscode: string | undefined) => {
         headers: {'X-Room-Passcode': decrypt(roomPasscode)}
     }
 }
+
+export const getRoomFromAccessToken = (accessToken: string) => {
+    try {
+        const payload = JSON.parse(atob(accessToken.split('.')[1]));
+        return payload.sub || null;
+    } catch (error) {
+        console.error("Erro ao decodificar JWT:", error);
+        return null;
+    }
+}

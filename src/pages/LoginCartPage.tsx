@@ -2,13 +2,9 @@ import EmptyCartIcon from '../assets/compras_vazio.png';
 import LeftArrowIcon from '../assets/seta_esquerda_4.png';
 import BackgroundImage from '../assets/background.jpeg';
 import {useState} from "react";
-import {useAuthData} from "../context/AuthContext.tsx";
 import {useLocation} from "wouter";
-import {useRoomData} from "../context/RoomContext.tsx";
 import OTPInput from "react-otp-input";
-import {LoggedInDataType, ValidateRoomRequest} from "../types/global.ts";
-import {validateRoomRequest} from "../api/roomApi.ts";
-import {encrypt} from "../utils/securityUtils.ts";
+import {useValidateRoomMutate} from "../api/room/query.ts";
 
 const LoginCartPage = () => {
     const [loginRoomCode, setLoginRoomCode] = useState('');
@@ -16,33 +12,10 @@ const LoginCartPage = () => {
 
     const [, setLocation] = useLocation();
 
-    const {setRoomCode, setRoomPasscode} = useRoomData();
-    const {setIsLoggedIn} = useAuthData();
+    const {mutate} = useValidateRoomMutate();
 
     const handleLoginRoom = () => {
-        const requestBody: ValidateRoomRequest = {
-            code: loginRoomCode,
-            passcode: loginRoomPasscode,
-        }
-
-        validateRoomRequest(requestBody)
-            .then(() => {
-                const localStorageData: LoggedInDataType = {
-                    roomCode: loginRoomCode,
-                    roomPasscode: encrypt(loginRoomPasscode),
-                }
-
-                setIsLoggedIn(true)
-                setRoomCode(loginRoomCode)
-                setRoomPasscode(encrypt(loginRoomPasscode))
-
-                localStorage.setItem('data', JSON.stringify(localStorageData))
-
-                setLocation(`/room/${loginRoomCode}`)
-            })
-            .catch(error => {
-                console.error('Erro ao fazer a requisição:', error);
-            });
+        mutate({roomCode: loginRoomCode, roomPasscode: loginRoomPasscode})
     }
 
     return (

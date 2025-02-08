@@ -1,4 +1,3 @@
-import {StrictMode} from 'react'
 import {createRoot} from 'react-dom/client'
 import './App.css'
 import App from './App.tsx'
@@ -10,15 +9,13 @@ import {RoomItemsProvider} from "./context/RoomItemsContext.tsx";
 const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-        <AuthProvider>
-            <RoomProvider>
-                <RoomItemsProvider>
-                    <QueryClientProvider client={queryClient}>
-                        <App/>
-                    </QueryClientProvider>
-                </RoomItemsProvider>
-            </RoomProvider>
-        </AuthProvider>
-    </StrictMode>,
+    <AuthProvider>
+        <RoomProvider>
+            <RoomItemsProvider>
+                <QueryClientProvider client={queryClient}>
+                    <App/>
+                </QueryClientProvider>
+            </RoomItemsProvider>
+        </RoomProvider>
+    </AuthProvider>
 )

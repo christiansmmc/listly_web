@@ -69,3 +69,7 @@ export interface FormatedRoomDataType {
     name: string
     categories: FormatedCategoryDataType[]
 }
+
+export interface LocalStorageDataType {
+    accessToken: string
+}

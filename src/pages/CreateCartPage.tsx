@@ -1,13 +1,11 @@
-import {CreateCartFirstStepResponse, LoggedInDataType} from "../types/global.ts";
 import EmptyCartIcon from '../assets/compras_vazio.png';
 import LeftArrowIcon from '../assets/seta_esquerda_4.png';
 import BackgroundImage from '../assets/background.jpeg';
-import {createRoomFirstStepRequest, createRoomLastStepRequest} from "../api/roomApi.ts";
-import {encrypt} from "../utils/securityUtils.ts";
 import {useEffect, useState} from "react";
 import {useAuthData} from "../context/AuthContext.tsx";
 import {useLocation} from "wouter";
 import {useRoomData} from "../context/RoomContext.tsx";
+import {useCreateRoomFirstStepMutate, useCreateRoomLastStepMutate, useValidateRoomMutate} from "../api/room/query.ts";
 
 const CreateCartPage = () => {
     const [newCartCode, setNewCartCode] = useState<number[]>([]);
@@ -15,47 +13,29 @@ const CreateCartPage = () => {
 
     const [, setLocation] = useLocation();
 
-    const {setRoomCode, setRoomPasscode} = useRoomData();
+    const {setRoomCode} = useRoomData();
     const {setIsLoggedIn} = useAuthData();
 
-    const createCartFirstStep = () => {
-        createRoomFirstStepRequest()
-            .then(res => {
-                const code: number[] = res.code.split("").map(Number);
-                setNewCartCode(code);
-            })
-            .catch(error => {
-                console.error('Erro ao fazer a requisição:', error);
-            });
+    const {mutateAsync: validateRoomMutate} = useValidateRoomMutate();
+    const {mutateAsync: createRoomFirstStepMutate} = useCreateRoomFirstStepMutate();
+    const {mutateAsync: createRoomLastStepMutate} = useCreateRoomLastStepMutate();
+
+    const createCartFirstStep = async () => {
+        const createRoomFirstStepResponse = await createRoomFirstStepMutate()
+        const code = createRoomFirstStepResponse.code.split("").map(Number)
+        setNewCartCode(code);
     }
 
-    const createCartLastStep = () => {
+    const createCartLastStep = async () => {
         const createdRoomCode = newCartCode.join("");
         const createdRoomPasscode = newCartPasscode.join("");
 
-        const requestBody: CreateCartFirstStepResponse = {
-            code: createdRoomCode,
-            passcode: createdRoomPasscode,
-        }
+        await createRoomLastStepMutate({roomCode: createdRoomCode, roomPasscode: createdRoomPasscode});
 
-        createRoomLastStepRequest(requestBody)
-            .then(() => {
-                const loggedInData: LoggedInDataType = {
-                    roomCode: createdRoomCode,
-                    roomPasscode: encrypt(createdRoomPasscode),
-                }
+        setRoomCode(createdRoomCode);
+        setIsLoggedIn(true)
 
-                setIsLoggedIn(true)
-                setRoomCode(createdRoomCode)
-                setRoomPasscode(encrypt(createdRoomPasscode))
-                localStorage.setItem('data', JSON.stringify(loggedInData));
-
-                console.log(createdRoomCode)
-                setLocation(`/room/${createdRoomCode}`)
-            })
-            .catch(error => {
-                console.error('Erro ao fazer a requisição:', error);
-            });
+        await validateRoomMutate({roomCode: createdRoomCode, roomPasscode: createdRoomPasscode});
     }
 
     const handleInputChange = (value: number, index: number) => {
