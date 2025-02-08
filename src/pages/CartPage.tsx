@@ -1,4 +1,4 @@
-import {FormatedRoomDataType, LoggedInDataType, ValidateRoomRequest} from "../types/global.ts";
+import {FormatedRoomDataType} from "../types/global.ts";
 import {useEffect, useState} from "react";
 import BackgroundImage from "../assets/background.jpeg";
 import FruitIcon from "../assets/maca.png";
@@ -14,14 +14,13 @@ import LeftArrowIcon from "../assets/resposta.png";
 import ConfigIcon from "../assets/definicoes.png";
 import AddItemModal from "../components/AddItemModal.tsx";
 import {capitalize} from "../utils/stringUtils.ts";
-import {checkItemRequest, removeItemRequest} from "../api/itemApi.ts";
 import EditRoomModal from "../components/EditRoomModal.tsx";
 import {useAuthData} from "../context/AuthContext.tsx";
 import {useLocation} from "wouter";
 import {useRoomData} from "../context/RoomContext.tsx";
-import {useGetRoomDataQuery} from "../api/room/query.ts";
-import {decrypt} from "../utils/securityUtils.ts";
-import {validateRoomRequest} from "../api/roomApi.ts";
+import {useGetRoomDataQuery, useValidateRoomAccessCodeMutate} from "../api/room/query.ts";
+import {getRoomFromAccessToken} from "../utils/securityUtils.ts";
+import {useCheckItemMutate, useRemoveItemMutate} from "../api/item/query.ts";
 
 const categoryIcons: Record<string, string> = {
     "Frutas": FruitIcon,
@@ -37,111 +36,30 @@ const categoryIcons: Record<string, string> = {
 const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
     const [, setLocation] = useLocation();
 
-    const {roomCode, roomPasscode, setRoomPasscode, setRoomCode} = useRoomData();
+    const {roomCode, setRoomCode} = useRoomData();
     const {isLoggedIn, setIsLoggedIn} = useAuthData();
 
     const [formatedRoomData, setFormatedRoomData] = useState<FormatedRoomDataType>();
     const [isAddItemOpen, setIsAddItemOpen] = useState<boolean>(false);
     const [isEditRoomOpen, setIsEditRoomOpen] = useState<boolean>(false);
 
-    const [pendingCheckRequests, setPendingCheckRequests] = useState(new Set<number>());
+    const {data} = useGetRoomDataQuery(roomCode);
 
-    const {
-        data,
-        refetch
-    } = useGetRoomDataQuery(roomCode, roomPasscode);
-
-    const checkItem = (itemId: number) => {
-        if (pendingCheckRequests.has(itemId)) return;
-        setPendingCheckRequests((prev) => new Set(prev).add(itemId));
-
-        setFormatedRoomData((prevData) => {
-            if (!prevData) return prevData;
-
-            return {
-                ...prevData,
-                categories: prevData.categories.map((category) => ({
-                    ...category,
-                    items: category.items.map((item) =>
-                        item.id === itemId ? {...item, checked: !item.checked} : item
-                    ),
-                })),
-            };
-        });
-
-        checkItemRequest(roomCode, roomPasscode, itemId)
-            .then(() => {
-                setPendingCheckRequests((prev) => {
-                    const newSet = new Set(prev);
-                    newSet.delete(itemId);
-                    return newSet;
-                });
-            })
-            .catch((error) => {
-                console.error("Erro ao fazer a requisição:", error);
-            });
-    };
-
-    const removeItem = (itemId: number) => {
-        removeItemRequest(roomCode, roomPasscode, itemId)
-            .then(() => {
-                setFormatedRoomData((prevData) => {
-                    if (!prevData) return prevData;
-
-                    return {
-                        ...prevData,
-                        categories: prevData.categories
-                            .map((category) => ({
-                                ...category,
-                                items: category.items.filter((item) => item.id !== itemId),
-                            }))
-                            .filter((category) => category.items.length > 0),
-                    };
-                });
-            })
-            .catch((error) => {
-                console.error("Erro ao fazer a requisição:", error);
-            });
-    };
-
-    const validateRoom = async (roomCode: string, roomPasscode: string) => {
-        const requestBody: ValidateRoomRequest = {
-            code: roomCode,
-            passcode: decrypt(roomPasscode),
-        };
-
-        try {
-            await validateRoomRequest(requestBody);
-            setRoomCode(roomCode);
-            setRoomPasscode(roomPasscode);
-            setIsLoggedIn(true);
-
-            const loggedInData: LoggedInDataType = {
-                roomCode: roomCode,
-                roomPasscode: roomPasscode,
-            };
-            localStorage.setItem("data", JSON.stringify(loggedInData));
-        } catch (error) {
-            console.error("Erro na validação da sala:", error);
-            handleLogout();
-        }
-    };
+    const {mutate} = useValidateRoomAccessCodeMutate()
+    const {mutate: checkItemMutate} = useCheckItemMutate()
+    const {mutate: removeItemMutate} = useRemoveItemMutate()
 
     const getCategoryIcon = (categoryName: string): string => {
         return categoryIcons[categoryName] || FruitIcon;
     };
 
     const handleLogout = () => {
-        setRoomCode(undefined)
-        setRoomPasscode(undefined)
-        setIsLoggedIn(false)
         localStorage.clear();
 
-        setLocation("/")
-    }
+        setRoomCode(undefined)
+        setIsLoggedIn(false)
 
-    const updateCart = () => {
-        refetch()
+        setLocation("/")
     }
 
     const handleCloseAddItemOpen = () => {
@@ -152,59 +70,43 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
         setIsEditRoomOpen(false);
     }
 
-    useEffect(() => {
-        const checkRoomStatus = async () => {
-            const params = new URLSearchParams(window.location.search);
-            const urlRoomPasscode = params.get("roomPasscode");
+    const checkItem = (itemId: number) => {
+        checkItemMutate({roomCode, itemId})
+    }
 
-            // Caso haja parâmetros na URL (login via URL)
-            if (params.size > 0 && urlRoomPasscode) {
-                localStorage.clear();
+    const removeItem = (itemId: number) => {
+        removeItemMutate({roomCode, itemId})
+    }
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const urlRoomAccessCode = params.get("accessCode");
+
+        // Login URL Params
+        if (params.size > 0 && urlRoomAccessCode) {
+            try {
+                mutate({roomCode: urlRoomCode, roomAccessCode: urlRoomAccessCode})
+            } catch {
+                handleLogout();
+            }
+            return;
+        }
+
+        // Try to get login info on localStorage
+        if (!isLoggedIn) {
+            const accessToken = localStorage.getItem("accessToken");
+            if (accessToken) {
                 try {
-                    await validateRoom(urlRoomCode, urlRoomPasscode);
-                    setLocation(`/room/${urlRoomCode}`);
+                    setRoomCode(getRoomFromAccessToken(accessToken));
+                    setIsLoggedIn(true)
                 } catch {
                     handleLogout();
                 }
-                return;
+            } else {
+                handleLogout();
             }
-
-            // Se estiver logado e os dados da sala estiverem disponíveis
-            if (isLoggedIn && roomCode && roomPasscode) {
-                if (roomCode !== urlRoomCode) {
-                    handleLogout();
-                } else {
-                    try {
-                        await validateRoom(roomCode, roomPasscode);
-                        refetch();
-                    } catch {
-                        handleLogout();
-                    }
-                }
-                return;
-            }
-
-            // Se não estiver logado, tenta recuperar os dados do localStorage
-            if (!isLoggedIn) {
-                const data = localStorage.getItem("data");
-                if (data) {
-                    const localStorageData: LoggedInDataType = JSON.parse(data);
-                    try {
-                        await validateRoom(
-                            localStorageData.roomCode || "",
-                            localStorageData.roomPasscode || ""
-                        );
-                    } catch {
-                        handleLogout();
-                    }
-                } else {
-                    handleLogout();
-                }
-            }
-        };
-
-        checkRoomStatus();
-    }, [isLoggedIn, roomCode, roomPasscode]);
+        }
+    }, [roomCode, isLoggedIn]);
 
     useEffect(() => {
         if (data) {
@@ -285,12 +187,9 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
             </div>
             {isAddItemOpen &&
                 <AddItemModal roomCode={roomCode || ""}
-                              roomPasscode={roomPasscode || ""}
                               handleCloseAddItemOpen={handleCloseAddItemOpen}/>}
             {isEditRoomOpen &&
-                <EditRoomModal roomCode={roomCode}
-                               roomPasscode={roomPasscode}
-                               updateCart={updateCart}
+                <EditRoomModal roomCode={roomCode || ""}
                                handleCloseEditRoomOpen={handleCloseEditRoomOpen}/>}
         </div>
     )

@@ -3,28 +3,30 @@ import {useState} from "react";
 import CopyIcon from "../assets/copia-de.png";
 import CleanIcon from "../assets/vassoura.png";
 import DeleteIcon from "../assets/lixo.png";
+import {useGenerateRoomAccessCodeQuery} from "../api/room/query.ts";
 
-interface EditRoomModal {
-    roomCode: string | undefined;
-    roomPasscode: string | undefined;
-    updateCart: VoidFunction;
+interface EditRoomModalProps {
+    roomCode: string;
     handleCloseEditRoomOpen: VoidFunction;
 }
 
 const EditRoomModal = ({
                            roomCode,
-                           roomPasscode,
                            handleCloseEditRoomOpen
-                       }: EditRoomModal) => {
+                       }: EditRoomModalProps) => {
     const [roomName, setRoomName] = useState<string>("");
     const [copied, setCopied] = useState(false);
+
+    const {mutateAsync} = useGenerateRoomAccessCodeQuery()
 
     const handleRoomName = (name: string) => {
         setRoomName(name);
     }
 
-    const handleCopyRoom = () => {
-        const url = `${window.location.origin}/room/${roomCode}?roomPasscode=${roomPasscode}`;
+    const handleCopyRoom = async () => {
+        const accessCodeResponse = await mutateAsync({roomCode})
+        const url = `${window.location.origin}/room/${roomCode}?accessCode=${accessCodeResponse.access_code}`;
+
         navigator.clipboard.writeText(url).then(() => {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);

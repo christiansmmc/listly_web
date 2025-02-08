@@ -1,39 +1,28 @@
 import {useEffect, useState} from "react";
 import {AddItemRequest, ListCategoryResponse} from "../types/global.ts";
 import CloseIcon from '../assets/erro.png'
-import {getCategories} from "../api/categoryApi.ts";
-import {useAddRoomItemMutate} from "../api/room/query.ts";
+import {useAddRoomItemMutate} from "../api/item/query.ts";
+import {useGetCategoriesQuery} from "../api/category/query.ts";
 
 interface AddItemModalProps {
     roomCode: string;
-    roomPasscode: string;
     handleCloseAddItemOpen: () => void;
 }
 
 const AddItemModal = ({
                           roomCode,
-                          roomPasscode,
                           handleCloseAddItemOpen
                       }: AddItemModalProps) => {
     const [categories, setCategories] = useState<ListCategoryResponse[]>([])
     const [item, setItem] = useState<AddItemRequest>({})
 
+    const {data} = useGetCategoriesQuery();
     const {mutate} = useAddRoomItemMutate();
 
     const handleAddItem = () => {
-        mutate({item, roomCode, roomPasscode});
+        mutate({item, roomCode});
         handleCloseAddItemOpen()
     };
-
-    const listCategories = () => {
-        getCategories(roomPasscode)
-            .then(res => {
-                setCategories(res);
-            })
-            .catch(error => {
-                console.error('Erro ao fazer a requisição:', error);
-            });
-    }
 
     const handleAddItemName = (name: string) => {
         setItem((prevItem) => ({
@@ -50,8 +39,8 @@ const AddItemModal = ({
     }
 
     useEffect(() => {
-        listCategories()
-    }, [])
+        if (data) setCategories(data)
+    }, [data])
 
     return (
 

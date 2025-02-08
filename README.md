@@ -21,6 +21,6 @@
 
 - Aplicar React query optimistic ou algo parecido no processo de adicionar item / remover item
 
-- Autenticacao por token
+- Aplicar Toast e logout no caso de erro em requests no react query
 
 - Salvar dados em cookies?

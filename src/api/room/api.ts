@@ -1,19 +1,24 @@
 import {
-    AddItemRequest,
     FormatedCategoryDataType,
     FormatedRoomDataType,
     GetRoomDataResponseType,
     ItemGetCartDataResponse
 } from "../../types/global.ts";
-import {getAuthHeader} from "../../utils/securityUtils.ts";
 import api from "../axiosConfig.ts";
-import {ValidateRoomRequestType, ValidateRoomResponseType} from "../interfaces/room.ts";
+import {
+    CreateCartFirstStepResponseType,
+    CreateRoomLastStepRequestType,
+    GenerateAccessCodeResponseType,
+    ValidateRoomAccessCodeRequestType,
+    ValidateRoomAccessCodeResponseType,
+    ValidateRoomRequestType,
+    ValidateRoomResponseType
+} from "../interfaces/room.ts";
 
 export const getRoomDataRequest = async (
-    roomCode: string | undefined,
-    roomPasscode: string | undefined
+    roomCode: string
 ): Promise<FormatedRoomDataType> => {
-    const {data} = await api.get<GetRoomDataResponseType>(`/rooms/${roomCode}`, getAuthHeader(roomPasscode));
+    const {data} = await api.get<GetRoomDataResponseType>(`/rooms/${roomCode}`);
 
     const categoryMap = new Map<number, FormatedCategoryDataType>();
 
@@ -38,15 +43,27 @@ export const getRoomDataRequest = async (
     };
 };
 
-export const addRoomItemRequest = async (
-    item: AddItemRequest,
-    roomCode: string | undefined,
-    roomPasscode: string | undefined
-) => {
-    await api.post(`/rooms/${roomCode}/items`, item, getAuthHeader(roomPasscode));
-};
-
 export const validateRoomRequest = async (requestBody: ValidateRoomRequestType): Promise<ValidateRoomResponseType> => {
     const {data} = await api.post(`/rooms/validate`, requestBody);
     return data;
 };
+
+export const validateRoomAccessCodeRequest = async (requestBody: ValidateRoomAccessCodeRequestType): Promise<ValidateRoomAccessCodeResponseType> => {
+    const {data} = await api.post(`/rooms/validate/access-code`, requestBody);
+    return data;
+};
+
+export const createRoomFirstStepRequest = async (): Promise<CreateCartFirstStepResponseType> => {
+    const {data} = await api.post('/rooms/initial-step');
+    return data;
+};
+
+export const createRoomLastStepRequest = async (requestBody: CreateRoomLastStepRequestType) => {
+    const {data} = await api.post('/rooms/last-step', requestBody);
+    return data;
+};
+
+export const generateRoomAccessCode = async (roomCode: string): Promise<GenerateAccessCodeResponseType> => {
+    const {data} = await api.get(`/rooms/${roomCode}/generate-access-code`);
+    return data;
+}
