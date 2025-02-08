@@ -1,5 +1,5 @@
 import {useMutation, useQuery} from "@tanstack/react-query";
-import {FormatedRoomDataType} from "../../types/global.ts";
+import {GetRoomDataResponseType} from "../../types/global.ts";
 import {AxiosError} from "axios";
 import {RequestError} from "../interfaces/requests.ts";
 import {
@@ -16,7 +16,7 @@ import {useRoomData} from "../../context/RoomContext.tsx";
 import {useAuthData} from "../../context/AuthContext.tsx";
 
 export const useGetRoomDataQuery = (roomCode?: string) => {
-    return useQuery<FormatedRoomDataType, AxiosError<RequestError>>({
+    return useQuery<GetRoomDataResponseType, AxiosError<RequestError>>({
         queryKey: ["GetRoomData", roomCode],
         queryFn: () => getRoomDataRequest(roomCode!),
         enabled: !!roomCode,
