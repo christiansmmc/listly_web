@@ -1,9 +1,4 @@
-import {
-    FormatedCategoryDataType,
-    FormatedRoomDataType,
-    GetRoomDataResponseType,
-    ItemGetCartDataResponse
-} from "../../types/global.ts";
+import {GetRoomDataResponseType} from "../../types/global.ts";
 import api from "../axiosConfig.ts";
 import {
     CreateCartFirstStepResponseType,
@@ -17,30 +12,9 @@ import {
 
 export const getRoomDataRequest = async (
     roomCode: string
-): Promise<FormatedRoomDataType> => {
+): Promise<GetRoomDataResponseType> => {
     const {data} = await api.get<GetRoomDataResponseType>(`/rooms/${roomCode}`);
-
-    const categoryMap = new Map<number, FormatedCategoryDataType>();
-
-    data.items.forEach((item: ItemGetCartDataResponse) => {
-        if (!categoryMap.has(item.category.id)) {
-            categoryMap.set(item.category.id, {
-                id: item.category.id,
-                name: item.category.name,
-                items: [],
-            });
-        }
-        categoryMap.get(item.category.id)!.items.push({
-            id: item.id,
-            name: item.name,
-            checked: item.checked,
-        });
-    });
-
-    return {
-        name: data.name,
-        categories: Array.from(categoryMap.values()),
-    };
+    return data;
 };
 
 export const validateRoomRequest = async (requestBody: ValidateRoomRequestType): Promise<ValidateRoomResponseType> => {

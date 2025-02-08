@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {AddItemRequest, ListCategoryResponse} from "../types/global.ts";
+import {AddItemDTO, ListCategoryResponse} from "../types/global.ts";
 import CloseIcon from '../assets/erro.png'
 import {useAddRoomItemMutate} from "../api/item/query.ts";
 import {useGetCategoriesQuery} from "../api/category/query.ts";
@@ -14,12 +14,28 @@ const AddItemModal = ({
                           handleCloseAddItemOpen
                       }: AddItemModalProps) => {
     const [categories, setCategories] = useState<ListCategoryResponse[]>([])
-    const [item, setItem] = useState<AddItemRequest>({})
+    const [item, setItem] = useState<AddItemDTO>({})
 
     const {data} = useGetCategoriesQuery();
     const {mutate} = useAddRoomItemMutate();
 
     const handleAddItem = () => {
+        const defaultCategory = categories.filter(it => it.name == "Outros")[0]
+
+        if (item.category_id === undefined) {
+            setItem((prevItem) => ({
+                ...prevItem,
+                category_id: defaultCategory.id,
+            }));
+        }
+
+        if (item.category_name === undefined) {
+            setItem((prevItem) => ({
+                ...prevItem,
+                category_name: defaultCategory.name,
+            }));
+        }
+
         mutate({item, roomCode});
         handleCloseAddItemOpen()
     };
@@ -35,6 +51,7 @@ const AddItemModal = ({
         setItem((prevItem) => ({
             ...prevItem,
             category_id: categoryId,
+            category_name: categories.filter(it => it.id === categoryId)[0].name || "Outros",
         }));
     }
 

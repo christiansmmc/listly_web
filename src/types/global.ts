@@ -38,8 +38,14 @@ export interface ListCategoryResponse {
 }
 
 export interface AddItemRequest {
+    name: string,
+    category_id: number,
+}
+
+export interface AddItemDTO {
     name?: string,
     category_id?: number,
+    category_name?: string
 }
 
 export interface ValidateRoomRequest {

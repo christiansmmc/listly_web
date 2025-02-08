@@ -1,4 +1,4 @@
-import {FormatedRoomDataType} from "../types/global.ts";
+import {FormatedCategoryDataType, FormatedRoomDataType, ItemGetCartDataResponse} from "../types/global.ts";
 import {useEffect, useState} from "react";
 import BackgroundImage from "../assets/background.jpeg";
 import FruitIcon from "../assets/maca.png";
@@ -44,7 +44,6 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
     const [isEditRoomOpen, setIsEditRoomOpen] = useState<boolean>(false);
 
     const {data} = useGetRoomDataQuery(roomCode);
-
     const {mutate} = useValidateRoomAccessCodeMutate()
     const {mutate: checkItemMutate} = useCheckItemMutate()
     const {mutate: removeItemMutate} = useRemoveItemMutate()
@@ -110,9 +109,29 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
 
     useEffect(() => {
         if (data) {
-            setFormatedRoomData(data);
+            const categoryMap = new Map<number, FormatedCategoryDataType>();
+
+            data.items.forEach((item: ItemGetCartDataResponse) => {
+                if (!categoryMap.has(item.category.id)) {
+                    categoryMap.set(item.category.id, {
+                        id: item.category.id,
+                        name: item.category.name,
+                        items: [],
+                    });
+                }
+                categoryMap.get(item.category.id)!.items.push({
+                    id: item.id,
+                    name: item.name,
+                    checked: item.checked,
+                });
+            });
+
+            setFormatedRoomData({
+                name: data.name,
+                categories: Array.from(categoryMap.values()),
+            })
         }
-    }, [data, setFormatedRoomData]);
+    }, [data]);
 
     return (
         <div className='h-full' style={{backgroundImage: `url(${BackgroundImage})`}}>
