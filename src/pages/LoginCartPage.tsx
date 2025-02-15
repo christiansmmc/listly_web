@@ -30,6 +30,7 @@ const LoginCartPage = () => {
                         Digite o código da sua lista de compras
                     </p>
                     <OTPInput
+                        inputType={'number'}
                         placeholder={'0000'}
                         value={loginRoomCode}
                         onChange={setLoginRoomCode}
@@ -51,6 +52,7 @@ const LoginCartPage = () => {
                         Digite a senha da sua lista de compras
                     </p>
                     <OTPInput
+                        inputType={'number'}
                         placeholder={'0000'}
                         value={loginRoomPasscode}
                         onChange={setLoginRoomPasscode}

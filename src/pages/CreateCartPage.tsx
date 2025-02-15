@@ -71,6 +71,7 @@ const CreateCartPage = () => {
                     <p className='text-2xl text-center font-semibold text-[#F4976C]'>Digite a senha para acessar sua
                         lista de compras</p>
                     <OTPInput
+                        inputType={'number'}
                         placeholder={'0000'}
                         value={newCartPasscode}
                         onChange={setNewCartPasscode}
