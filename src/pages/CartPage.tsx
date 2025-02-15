@@ -156,7 +156,7 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
                     className="fixed top-0 left-0 w-full h-24 flex items-center justify-center bg-[#FDF7EB] bg-opacity-85">
                 </div>
             }
-            <div className="flex flex-col gap-2 pt-28 h-[calc(100vh-96px)] overflow-y-auto">
+            <div className="flex flex-col gap-2 pt-28 h-[calc(100dvh-96px)] overflow-y-auto">
                 {formatedRoomData != null && formatedRoomData.categories.length <= 0 && (
                     <div className='flex justify-center items-center p-4 bg-[#FDF7EB] bg-opacity-75 w-[95%] rounded'>
                         <p className='text-2xl font-extrabold text-[#F4976C]'>
