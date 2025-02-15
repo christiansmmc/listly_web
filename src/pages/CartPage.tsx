@@ -147,16 +147,16 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
             {formatedRoomData ?
                 (
                     <div
-                        className="fixed top-0 left-0 w-full h-24 flex items-center justify-center bg-[#FDF7EB]">
+                        className="fixed top-0 left-0 w-full h-20 flex items-center justify-center bg-[#FDF7EB]">
                         <div className='relative flex items-center justify-center border-b border-[#F4976C] w-[90%]'>
-                            <p className='text-4xl font-extrabold text-[#F4976C]'>{formatedRoomData.name}</p>
+                            <p className='text-3xl font-extrabold text-[#F4976C]'>{formatedRoomData.name}</p>
                         </div>
                     </div>
                 ) : <div
-                    className="fixed top-0 left-0 w-full h-24 flex items-center justify-center bg-[#FDF7EB] bg-opacity-85">
+                    className="fixed top-0 left-0 w-full h-20 flex items-center justify-center bg-[#FDF7EB] bg-opacity-85">
                 </div>
             }
-            <div className="flex flex-col gap-2 pt-28 h-[calc(100dvh-96px)] overflow-y-auto">
+            <div className="flex flex-col gap-2 pt-24 h-[calc(100dvh-96px)] overflow-y-auto">
                 {formatedRoomData != null && formatedRoomData.categories.length <= 0 && (
                     <div className='flex justify-center items-center p-4 bg-[#FDF7EB] bg-opacity-75 w-[95%] rounded'>
                         <p className='text-2xl font-extrabold text-[#F4976C]'>
@@ -168,11 +168,11 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
                     return (
                         <div
                             key={category.id}
-                            className="bg-[#FDF7EB] bg-opacity-95 w-[98%] rounded mx-auto py-3 border-2 border-[#F3E0C2]">
-                            <div className='flex items-center gap-6 p-5 pl-7 '>
+                            className="bg-[#FDF7EB] bg-opacity-95 w-[98%] rounded mx-auto py-2 border-2 border-[#F3E0C2]">
+                            <div className='flex items-center gap-6 p-5 pl-7'>
                                 <img src={getCategoryIcon(category.name)} alt="icone" className="h-9 w-9"/>
                                 <div
-                                    className='text-2xl font-extrabold text-[#F4976C] border-b border-[#F4976C] w-[80%]'>{category.name}</div>
+                                    className='text-xl font-extrabold text-[#F4976C] border-b border-[#F4976C] w-[80%]'>{category.name}</div>
                             </div>
                             <div className='flex flex-col gap-1'>
                                 {category.items.map(item => {
@@ -185,9 +185,9 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
                                                     checked={item.checked}
                                                     onChange={() => checkItem(item.id)}
                                                 />
-                                                <div className='text-xl'>{capitalize(item.name)}</div>
+                                                <div className='text-lg'>{capitalize(item.name)}</div>
                                             </div>
-                                            <img src={TrashIcon} alt="icone" className="flex items-center h-7 w-7"
+                                            <img src={TrashIcon} alt="icone" className="flex items-center h-6 w-6"
                                                  onClick={() => removeItem(item.id)}/>
                                         </div>
                                     )
