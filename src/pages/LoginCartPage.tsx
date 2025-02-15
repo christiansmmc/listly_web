@@ -20,7 +20,7 @@ const LoginCartPage = () => {
 
     return (
         <div className='h-full w-full' style={{backgroundImage: `url(${BackgroundImage})`}}>
-            <div className="fixed top-0 left-0 w-full h-24 flex items-center justify-center bg-[#FDF7EB] bg-opacity-95">
+            <div className="fixed top-0 left-0 w-full h-20 flex items-center justify-center bg-[#FDF7EB] bg-opacity-95">
                 <p className='text-4xl font-extrabold text-[#F4976C]'>Listly</p>
             </div>
             <div className='h-full flex flex-col items-center justify-center gap-2'>

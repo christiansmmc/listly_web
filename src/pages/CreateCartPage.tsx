@@ -41,12 +41,12 @@ const CreateCartPage = () => {
 
     return (
         <div className='h-full w-full' style={{backgroundImage: `url(${BackgroundImage})`}}>
-            <div className="fixed top-0 left-0 w-full h-24 flex items-center justify-center bg-[#FDF7EB] bg-opacity-95">
+            <div className="fixed top-0 left-0 w-full h-20 flex items-center justify-center bg-[#FDF7EB] bg-opacity-95">
                 <p className='text-4xl font-extrabold text-[#F4976C]'>Listly</p>
             </div>
             <div className='h-full flex flex-col items-center justify-center gap-2'>
                 <div
-                    className='w-[90%] mt-10 flex flex-col items-center gap-5 bg-[#fdfaf2] bg-opacity-95 py-12 border border-[#B48768] rounded '>
+                    className='w-[90%] flex flex-col items-center gap-5 bg-[#fdfaf2] bg-opacity-95 py-12 border border-[#B48768] rounded '>
                     <p className='text-2xl text-center font-semibold text-[#F4976C]'>Código da sua nova lista de
                         compras</p>
                     <OTPInput
@@ -64,7 +64,6 @@ const CreateCartPage = () => {
                             />
                         )}
                     />
-
                 </div>
                 <div
                     className='w-[90%] flex flex-col items-center gap-5 bg-[#fdfaf2] bg-opacity-95 py-12 border border-[#B48768] rounded '>
@@ -76,7 +75,6 @@ const CreateCartPage = () => {
                         value={newCartPasscode}
                         onChange={setNewCartPasscode}
                         numInputs={4}
-                        shouldAutoFocus
                         renderSeparator={<span className="mx-1"></span>}
                         inputStyle={{'width': '40px'}}
                         renderInput={(props) => (
