@@ -1,17 +1,23 @@
 import {FormatedCategoryDataType, FormatedRoomDataType, ItemGetCartDataResponse} from "../types/global.ts";
 import {useEffect, useState} from "react";
 import BackgroundImage from "../assets/background.jpeg";
-import FruitIcon from "../assets/maca.png";
-import VegetableIcon from "../assets/brocolis.png";
-import ProteinIcon from "../assets/jerk-chicken.png";
-import DrinkIcon from "../assets/soda.png";
-import BreadIcon from "../assets/pao.png";
-import SaltIcon from "../assets/sal.png";
-import ToiletIcon from "../assets/papel-higienico.png";
-import TrashIcon from "../assets/remover.png";
-import CleanIcon from "../assets/sabao-para-louca.png";
-import LeftArrowIcon from "../assets/resposta.png";
-import ConfigIcon from "../assets/definicoes.png";
+import FruitIcon from "../assets/fruitIcon.png";
+import VegetableIcon from "../assets/vegetableIcon.png";
+import ProteinIcon from "../assets/proteinIcon.png";
+import DrinkIcon from "../assets/drinkIcon.png";
+import BreadIcon from "../assets/breadIcon.png";
+import SeasoningIcon from "../assets/seasoningIcon.png";
+import HygieneIcon from "../assets/hygieneIcon.png";
+import TrashIcon from "../assets/trashIcon.png";
+import CleanIcon from "../assets/cleanIcon.png";
+import LeftArrowIcon from "../assets/leftArrowIcon.png";
+import ConfigIcon from "../assets/configIcon.png";
+import DairyIcon from "../assets/dairyIcon.png";
+import FrozenFoodIcon from "../assets/frozenFoodIcon.png";
+import SnackIcon from "../assets/snackIcon.png";
+import CerealIcon from "../assets/cerealIcon.png";
+import SweetIcon from "../assets/sweetIcon.png";
+import OtherIcon from "../assets/otherIcon.png";
 import AddItemModal from "../components/AddItemModal.tsx";
 import {capitalize} from "../utils/stringUtils.ts";
 import EditRoomModal from "../components/EditRoomModal.tsx";
@@ -28,10 +34,16 @@ const categoryIcons: Record<string, string> = {
     "Legumes e Verduras": VegetableIcon,
     "Proteínas": ProteinIcon,
     "Bebidas": DrinkIcon,
+    "Laticínios": DairyIcon,
     "Pães e Massas": BreadIcon,
-    "Temperos e Especiarias": SaltIcon,
-    "Higiene Pessoal": ToiletIcon,
-    "Produtos de Limpeza": CleanIcon
+    "Temperos e Especiarias": SeasoningIcon,
+    "Higiene Pessoal": HygieneIcon,
+    "Produtos de Limpeza": CleanIcon,
+    "Congelados": FrozenFoodIcon,
+    "Snacks": SnackIcon,
+    "Grãos e Cereais": CerealIcon,
+    "Doces e Sobremesas": SweetIcon,
+    "Outros": OtherIcon
 };
 
 const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
