@@ -182,7 +182,7 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
                             key={category.id}
                             className="bg-[#FDF7EB] bg-opacity-95 w-[98%] rounded mx-auto py-2 border-2 border-[#F3E0C2]">
                             <div className='flex items-center gap-6 p-5 pl-7'>
-                                <img src={getCategoryIcon(category.name)} alt="icone" className="h-9 w-9"/>
+                                <img src={getCategoryIcon(category.name)} alt="icone" className="h-8 w-8"/>
                                 <div
                                     className='text-xl font-extrabold text-[#F4976C] border-b border-[#F4976C] w-[80%]'>{category.name}</div>
                             </div>
