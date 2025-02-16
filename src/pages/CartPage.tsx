@@ -149,8 +149,13 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
 
             setFormatedRoomData({
                 name: data.name,
-                categories: Array.from(categoryMap.values()),
-            })
+                categories: Array.from(categoryMap.values()).sort((a, b) => {
+                    if (a.name === "Outros") return 1;
+                    if (b.name === "Outros") return -1;
+                    return a.name.localeCompare(b.name);
+                }),
+            });
+
         }
     }, [data]);
 
@@ -170,7 +175,7 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
             }
             <div className="flex flex-col gap-2 pt-24 h-[calc(100dvh-80px)] overflow-y-auto">
                 {formatedRoomData != null && formatedRoomData.categories.length <= 0 && (
-                    <div className='flex justify-center items-center p-4 bg-[#FDF7EB] bg-opacity-75 w-[95%] rounded'>
+                    <div className='flex justify-center items-center p-4 bg-[#FDF7EB] bg-opacity-75 w-[100%] rounded'>
                         <p className='text-2xl font-extrabold text-[#F4976C]'>
                             Adicione itens no seu carrinho para aparecerem aqui!
                         </p>

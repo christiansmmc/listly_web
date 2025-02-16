@@ -56,7 +56,13 @@ const AddItemModal = ({
     }
 
     useEffect(() => {
-        if (data) setCategories(data)
+        if (data) {
+            setCategories(data.sort((a, b) => {
+                if (a.name === "Outros") return 1;
+                if (b.name === "Outros") return -1;
+                return a.name.localeCompare(b.name);
+            }))
+        }
     }, [data])
 
     return (
