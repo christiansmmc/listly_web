@@ -54,11 +54,20 @@ export const useValidateRoomAccessCodeMutate = () => {
             return validateRoomAccessCodeRequest({room_code: roomCode, access_code: roomAccessCode});
         },
         onSuccess: (data: ValidateRoomAccessCodeResponseType, variables) => {
+            localStorage.clear();
             localStorage.setItem("accessToken", data.access_token);
             setRoomCode(variables.roomCode)
             setIsLoggedIn(true)
 
             setLocation(`/room/${variables.roomCode}`);
+        },
+        onError: () => {
+            localStorage.clear();
+
+            setRoomCode(undefined)
+            setIsLoggedIn(false)
+
+            setLocation("/")
         }
     });
 };

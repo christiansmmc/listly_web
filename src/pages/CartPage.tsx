@@ -25,9 +25,9 @@ import {useAuthData} from "../context/AuthContext.tsx";
 import {useLocation} from "wouter";
 import {useRoomData} from "../context/RoomContext.tsx";
 import {useGetRoomDataQuery, useValidateRoomAccessCodeMutate} from "../api/room/query.ts";
-import {getRoomFromAccessToken} from "../utils/securityUtils.ts";
 import {useCheckItemMutate, useRemoveItemMutate} from "../api/item/query.ts";
 import {useDebounce} from "../hooks/useDebounce.ts";
+import {getRoomFromAccessToken} from "../utils/securityUtils.ts";
 
 const categoryIcons: Record<string, string> = {
     "Frutas": FruitIcon,
@@ -56,7 +56,7 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
     const [isAddItemOpen, setIsAddItemOpen] = useState<boolean>(false);
     const [isEditRoomOpen, setIsEditRoomOpen] = useState<boolean>(false);
 
-    const {data} = useGetRoomDataQuery(roomCode);
+    const {data, isError} = useGetRoomDataQuery(roomCode);
     const {mutate} = useValidateRoomAccessCodeMutate()
     const {mutate: checkItemMutate} = useCheckItemMutate()
     const {mutate: removeItemMutate} = useRemoveItemMutate()
@@ -104,24 +104,17 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
 
         // Login URL Params
         if (params.size > 0 && urlRoomAccessCode) {
-            try {
-                mutate({roomCode: urlRoomCode, roomAccessCode: urlRoomAccessCode})
-            } catch {
-                handleLogout();
-            }
+            mutate({roomCode: urlRoomCode, roomAccessCode: urlRoomAccessCode})
             return;
         }
 
         // Try to get login info on localStorage
         if (!isLoggedIn) {
             const accessToken = localStorage.getItem("accessToken");
+
             if (accessToken) {
-                try {
-                    setRoomCode(getRoomFromAccessToken(accessToken));
-                    setIsLoggedIn(true)
-                } catch {
-                    handleLogout();
-                }
+                setRoomCode(getRoomFromAccessToken(accessToken));
+                setIsLoggedIn(true)
             } else {
                 handleLogout();
             }
@@ -129,6 +122,10 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
     }, [roomCode, isLoggedIn]);
 
     useEffect(() => {
+        if (isError) {
+            handleLogout()
+        }
+
         if (data) {
             const categoryMap = new Map<number, FormatedCategoryDataType>();
 
@@ -155,9 +152,8 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
                     return a.name.localeCompare(b.name);
                 }),
             });
-
         }
-    }, [data]);
+    }, [data, isError]);
 
     return (
         <div className='h-full' style={{backgroundImage: `url(${BackgroundImage})`}}>

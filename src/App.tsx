@@ -7,6 +7,7 @@ import LoginCartPage from "./pages/LoginCartPage.tsx";
 import {getRoomFromAccessToken} from "./utils/securityUtils.ts";
 import {useRoomData} from "./context/RoomContext.tsx";
 import {useAuthData} from "./context/AuthContext.tsx";
+import {useEffect} from "react";
 
 function App() {
     const [, setLocation] = useLocation();
@@ -14,14 +15,16 @@ function App() {
     const {setRoomCode} = useRoomData();
     const {setIsLoggedIn} = useAuthData();
 
-    const accessToken = localStorage.getItem("accessToken");
-    if (accessToken) {
-        const roomCode: string = getRoomFromAccessToken(accessToken)
+    useEffect(() => {
+        const accessToken = localStorage.getItem("accessToken");
+        if (accessToken) {
+            const roomCode: string = getRoomFromAccessToken(accessToken)
 
-        setIsLoggedIn(true)
-        setRoomCode(roomCode);
-        setLocation(`/room/${roomCode}`)
-    }
+            setIsLoggedIn(true)
+            setRoomCode(roomCode);
+            setLocation(`/room/${roomCode}`)
+        }
+    }, []);
 
     return (
         <>

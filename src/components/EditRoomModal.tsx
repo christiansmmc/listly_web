@@ -82,7 +82,6 @@ const EditRoomModal = ({
                                         </div>
                                     </div>
                                 </div>
-
                                 <div className='w-1/2 flex flex-col items-center gap-2'>
                                     <div className='w-20 h-20 border border-[#F4976C] rounded-lg cursor-pointer flex justify-center items-center'>
                                         <img src={DeleteIcon} alt="icone" className="h-12 w-12"/>
