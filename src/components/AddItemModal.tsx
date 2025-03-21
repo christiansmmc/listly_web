@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {AddItemDTO, ListCategoryResponse} from "../types/global.ts";
-import CloseIcon from '../assets/erro.png'
+import CloseIcon from '../assets/close.png'
 import {useAddRoomItemMutate} from "../api/item/query.ts";
 import {useGetCategoriesQuery} from "../api/category/query.ts";
 
@@ -71,12 +71,12 @@ const AddItemModal = ({
             <div className='flex justify-between items-center w-full h-full'>
                 <div
                     className='relative flex flex-col mx-auto bg-[#FDF7EB] border-2 border-[#F4976C] rounded h-1/2 w-[95%]'>
-                    <div className='absolute -top-3 -left-3'
+                    <div className='absolute -top-1 -right-1'
                          onClick={handleCloseAddItemOpen}>
-                        <img src={CloseIcon} alt="icone" className="h-11 w-11" onClick={handleCloseAddItemOpen}/>
+                        <img src={CloseIcon} alt="icone" className="h-12 w-12" onClick={handleCloseAddItemOpen}/>
                     </div>
                     <div
-                        className='w-[90%] mx-auto flex items-center justify-center pt-7 border-b border-[#F4976C]'>
+                        className='w-[90%] mx-auto flex items-center justify-center mt-7 border-b border-[#F4976C]'>
                         <p className='text-2xl text-[#F4976C] font-extrabold'>Adicione um Item a sua lista</p>
                     </div>
                     <div className='relative flex flex-col items-center justify-center h-full pb-20 gap-10'>
@@ -103,8 +103,8 @@ const AddItemModal = ({
                                 ))}
                             </select>
                         </div>
-                        <div className='absolute bottom-5 py-2 px-10 border bg-[#F4976C]'>
-                            <div className='text-2xl' onClick={handleAddItem}>Adicionar</div>
+                        <div className='absolute bottom-5 py-2 px-10 rounded border bg-[#F4976C]'>
+                            <div className='text-xl' onClick={handleAddItem}>Adicionar</div>
                         </div>
                     </div>
                 </div>
