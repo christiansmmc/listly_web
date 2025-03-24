@@ -208,7 +208,7 @@ const CartPage = ({ urlRoomCode }: { urlRoomCode: string }) => {
                                                 />
                                                 <div className='text-lg'>{capitalize(item.name)}</div>
                                             </div>
-                                            <img src={TrashIcon} alt="icone" className="flex items-center h-6 w-6"
+                                            <img src={TrashIcon} alt="icone" className="flex items-center h-6 w-6 cursor-pointer"
                                                 onClick={() => removeItem(item.id)} />
                                         </div>
                                     )

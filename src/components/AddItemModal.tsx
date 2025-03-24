@@ -15,11 +15,18 @@ const AddItemModal = ({
 }: AddItemModalProps) => {
     const [categories, setCategories] = useState<ListCategoryResponse[]>([])
     const [item, setItem] = useState<AddItemDTO>({})
+    const [errorMessage, setErrorMessage] = useState<string>("")
 
     const { data } = useGetCategoriesQuery();
     const { mutate } = useAddRoomItemMutate();
 
     const handleAddItem = () => {
+        if (!item.name || item.name.trim() === "") {
+            setErrorMessage("Por favor, insira o nome do produto!");
+            return;
+        }
+
+        setErrorMessage("");
         const defaultCategory = categories.filter(it => it.name == "Outros")[0]
 
         if (item.category_id === undefined) {
@@ -41,6 +48,7 @@ const AddItemModal = ({
     };
 
     const handleAddItemName = (name: string) => {
+        setErrorMessage("");
         setItem((prevItem) => ({
             ...prevItem,
             name,
@@ -91,6 +99,9 @@ const AddItemModal = ({
                                     className='w-3/4 h-10 p-2 border border-[#F4976C] rounded-lg'
                                     onChange={(e) => handleAddItemName(e.target.value)}
                                     value={item?.name || ""} />
+                                {errorMessage && (
+                                    <div className='text-red-500 text-sm'>{errorMessage}</div>
+                                )}
                             </div>
                             <div className='w-full flex flex-col justify-center items-center gap-2'>
                                 <div className='text-xl'>Categoria do Produto</div>
