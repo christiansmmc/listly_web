@@ -1,5 +1,5 @@
-import {FormatedCategoryDataType, FormatedRoomDataType, ItemGetCartDataResponse} from "../types/global.ts";
-import {useEffect, useState} from "react";
+import { FormatedCategoryDataType, FormatedRoomDataType, ItemGetCartDataResponse } from "../types/global.ts";
+import { useEffect, useState } from "react";
 import BackgroundImage from "../assets/background.jpeg";
 import FruitIcon from "../assets/fruitIcon.png";
 import VegetableIcon from "../assets/vegetableIcon.png";
@@ -19,15 +19,15 @@ import CerealIcon from "../assets/cerealIcon.png";
 import SweetIcon from "../assets/sweetIcon.png";
 import OtherIcon from "../assets/otherIcon.png";
 import AddItemModal from "../components/AddItemModal.tsx";
-import {capitalize} from "../utils/stringUtils.ts";
+import { capitalize } from "../utils/stringUtils.ts";
 import EditRoomModal from "../components/EditRoomModal.tsx";
-import {useAuthData} from "../context/AuthContext.tsx";
-import {useLocation} from "wouter";
-import {useRoomData} from "../context/RoomContext.tsx";
-import {useGetRoomDataQuery, useValidateRoomAccessCodeMutate} from "../api/room/query.ts";
-import {useCheckItemMutate, useRemoveItemMutate} from "../api/item/query.ts";
-import {useDebounce} from "../hooks/useDebounce.ts";
-import {getRoomFromAccessToken} from "../utils/securityUtils.ts";
+import { useAuthData } from "../context/AuthContext.tsx";
+import { useLocation } from "wouter";
+import { useRoomData } from "../context/RoomContext.tsx";
+import { useGetRoomDataQuery, useValidateRoomAccessCodeMutate } from "../api/room/query.ts";
+import { useCheckItemMutate, useRemoveItemMutate } from "../api/item/query.ts";
+import { useDebounce } from "../hooks/useDebounce.ts";
+import { getRoomFromAccessToken } from "../utils/securityUtils.ts";
 
 const categoryIcons: Record<string, string> = {
     "Frutas": FruitIcon,
@@ -46,20 +46,20 @@ const categoryIcons: Record<string, string> = {
     "Outros": OtherIcon
 };
 
-const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
+const CartPage = ({ urlRoomCode }: { urlRoomCode: string }) => {
     const [, setLocation] = useLocation();
 
-    const {roomCode, setRoomCode} = useRoomData();
-    const {isLoggedIn, setIsLoggedIn} = useAuthData();
+    const { roomCode, setRoomCode } = useRoomData();
+    const { isLoggedIn, setIsLoggedIn } = useAuthData();
 
     const [formatedRoomData, setFormatedRoomData] = useState<FormatedRoomDataType>();
     const [isAddItemOpen, setIsAddItemOpen] = useState<boolean>(false);
     const [isEditRoomOpen, setIsEditRoomOpen] = useState<boolean>(false);
 
-    const {data, isError} = useGetRoomDataQuery(roomCode);
-    const {mutate} = useValidateRoomAccessCodeMutate()
-    const {mutate: checkItemMutate} = useCheckItemMutate()
-    const {mutate: removeItemMutate} = useRemoveItemMutate()
+    const { data, isError } = useGetRoomDataQuery(roomCode);
+    const { mutate } = useValidateRoomAccessCodeMutate()
+    const { mutate: checkItemMutate } = useCheckItemMutate()
+    const { mutate: removeItemMutate } = useRemoveItemMutate()
 
     const getCategoryIcon = (categoryName: string): string => {
         return categoryIcons[categoryName] || FruitIcon;
@@ -83,11 +83,11 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
     }
 
     const debouncedCheckItem = useDebounce((itemId: number) => {
-        checkItemMutate({roomCode, itemId});
+        checkItemMutate({ roomCode, itemId });
     }, 300);
 
     const debouncedRemoveItem = useDebounce((itemId: number) => {
-        removeItemMutate({roomCode, itemId});
+        removeItemMutate({ roomCode, itemId });
     }, 300);
 
     const checkItem = (itemId: number) => {
@@ -104,7 +104,7 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
 
         // Login URL Params
         if (params.size > 0 && urlRoomAccessCode) {
-            mutate({roomCode: urlRoomCode, roomAccessCode: urlRoomAccessCode})
+            mutate({ roomCode: urlRoomCode, roomAccessCode: urlRoomAccessCode })
             return;
         }
 
@@ -156,7 +156,7 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
     }, [data, isError]);
 
     return (
-        <div className='h-full' style={{backgroundImage: `url(${BackgroundImage})`}}>
+        <div className='h-full' style={{ backgroundImage: `url(${BackgroundImage})` }}>
             {formatedRoomData ?
                 (
                     <div
@@ -171,10 +171,18 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
             }
             <div className="flex flex-col gap-2 pt-24 h-[calc(100dvh-80px)] overflow-y-auto">
                 {formatedRoomData != null && formatedRoomData.categories.length <= 0 && (
-                    <div className='flex justify-center items-center p-4 bg-[#FDF7EB] bg-opacity-75 w-[100%] rounded'>
-                        <p className='text-2xl font-extrabold text-[#F4976C]'>
-                            Adicione itens no seu carrinho para aparecerem aqui!
+                    <div className='flex flex-col justify-center items-center p-6 bg-[#FDF7EB] bg-opacity-90 w-[90%] mx-auto rounded-lg shadow-md border-2 border-[#F3E0C2]'>
+                        <p className='text-2xl font-extrabold text-[#F4976C] text-center mb-3'>
+                            Seu carrinho está vazio!
                         </p>
+                        <p className='text-md text-gray-600 text-center mb-5'>
+                            Adicione itens à sua lista de compras para começar a organizá-los.
+                        </p>
+                        <button
+                            className='flex items-center justify-center px-6 py-3 rounded-lg border border-[#F4976C] bg-[#F4976C] text-white font-bold cursor-pointer transition duration-200 hover:bg-[#f3865c] active:scale-95'
+                            onClick={() => setIsAddItemOpen(true)}>
+                            Adicionar primeiro item
+                        </button>
                     </div>
                 )}
                 {formatedRoomData?.categories.map(category => {
@@ -183,7 +191,7 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
                             key={category.id}
                             className="bg-[#FDF7EB] bg-opacity-95 w-[98%] rounded mx-auto py-2 border-2 border-[#F3E0C2]">
                             <div className='flex items-center gap-6 p-5 pl-7'>
-                                <img src={getCategoryIcon(category.name)} alt="icone" className="h-8 w-8"/>
+                                <img src={getCategoryIcon(category.name)} alt="icone" className="h-8 w-8" />
                                 <div
                                     className='text-xl font-extrabold text-[#F4976C] border-b border-[#F4976C] w-[80%]'>{category.name}</div>
                             </div>
@@ -201,7 +209,7 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
                                                 <div className='text-lg'>{capitalize(item.name)}</div>
                                             </div>
                                             <img src={TrashIcon} alt="icone" className="flex items-center h-6 w-6"
-                                                 onClick={() => removeItem(item.id)}/>
+                                                onClick={() => removeItem(item.id)} />
                                         </div>
                                     )
                                 })}
@@ -212,26 +220,30 @@ const CartPage = ({urlRoomCode}: { urlRoomCode: string }) => {
             </div>
             <div
                 className='absolute w-full h-16 bottom-0 border-t border-[#F4976C] flex justify-between items-center bg-[#FDF7EB]'>
-                <div className='flex justify-center items-center w-36 h-16 cursor-pointer'>
-                    <img src={LeftArrowIcon} alt="icone" className="h-9 w-9" onClick={handleLogout}/>
+                <div
+                    onClick={handleLogout}
+                    className='flex justify-center items-center w-36 h-16 cursor-pointer transition duration-200 hover:bg-[#F9E0C2] active:bg-[#F4976C]'>
+                    <img src={LeftArrowIcon} alt="icone" className="h-9 w-9 transition duration-200 active:scale-90" />
                 </div>
                 <div className='flex justify-center items-center w-full h-16'>
-                    <p
-                        className='px-5 py-2 border border-[#F4976C] rounded text-[#F4976C] bg-[#FDF7EB] font-extrabold'
+                    <div
+                        className='flex items-center justify-center px-6 py-3 rounded-lg border border-[#F4976C] bg-[#FDF7EB] text-[#F4976C] font-extrabold cursor-pointer transition duration-200 hover:bg-[#F9E0C2] active:bg-[#F4976C] active:text-[#FDF7EB]'
                         onClick={() => setIsAddItemOpen(true)}>
                         Adicionar item a lista
-                    </p>
+                    </div>
                 </div>
-                <div className='flex justify-center items-center w-36 h-16 cursor-pointer'>
-                    <img src={ConfigIcon} alt="icone" className="h-9 w-9" onClick={() => setIsEditRoomOpen(true)}/>
+                <div
+                    onClick={() => setIsEditRoomOpen(true)}
+                    className='flex justify-center items-center w-36 h-16 cursor-pointer transition duration-200 hover:bg-[#F9E0C2] active:bg-[#F4976C]'>
+                    <img src={ConfigIcon} alt="icone" className="h-9 w-9 transition duration-200 active:scale-90" />
                 </div>
             </div>
             {isAddItemOpen &&
                 <AddItemModal roomCode={roomCode || ""}
-                              handleCloseAddItemOpen={handleCloseAddItemOpen}/>}
+                    handleCloseAddItemOpen={handleCloseAddItemOpen} />}
             {isEditRoomOpen &&
                 <EditRoomModal roomCode={roomCode || ""}
-                               handleCloseEditRoomOpen={handleCloseEditRoomOpen}/>}
+                    handleCloseEditRoomOpen={handleCloseEditRoomOpen} />}
         </div>
     )
 }

@@ -14,5 +14,3 @@
 - Salvar dados em cookies?
 
 - Tela de config ainda n atualiza nome da sala e n exclui
-
-- Refatorar tela de add item para ficar identico com aba de config

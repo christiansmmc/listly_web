@@ -70,7 +70,7 @@ const AddItemModal = ({
             <div className='flex justify-between items-center w-full h-full'>
                 <div
                     className='relative flex flex-col mx-auto bg-[#FDF7EB] border-2 border-[#F4976C] rounded h-1/2 w-[95%]'>
-                    <div className='absolute -top-1 -right-1' onClick={handleCloseAddItemOpen}>
+                    <div className='absolute -top-1 -right-1 cursor-pointer' onClick={handleCloseAddItemOpen}>
                         <img
                             src={CloseIcon}
                             alt="icone"
@@ -107,57 +107,14 @@ const AddItemModal = ({
                                     ))}
                                 </select>
                             </div>
-                            <div className='absolute bottom-5 py-2 px-10 rounded border bg-[#F4976C]'>
-                                <div className='text-xl' onClick={handleAddItem}>Adicionar</div>
+                            <div className='absolute bottom-5 flex items-center justify-center py-2 px-10 rounded-lg border border-[#F4976C] bg-[#FDF7EB] text-[#F4976C] font-extrabold cursor-pointer transition duration-200 hover:bg-[#F9E0C2] active:bg-[#F4976C] active:text-[#FDF7EB]' onClick={handleAddItem}>
+                                <div className='text-xl'>Adicionar</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        // <div className='absolute top-0 w-full h-full bg-[#FDF7EB] bg-opacity-85'>
-        //     <div className='flex justify-between items-center w-full h-full'>
-        //         <div
-        //             className='relative flex flex-col mx-auto bg-[#FDF7EB] border-2 border-[#F4976C] rounded h-1/2 w-[95%]'>
-        //             <div className='absolute -top-1 -right-1'
-        //                  onClick={handleCloseAddItemOpen}>
-        //                 <img src={CloseIcon} alt="icone" className="h-12 w-12" onClick={handleCloseAddItemOpen}/>
-        //             </div>
-        //             <div
-        //                 className='w-[90%] mx-auto flex items-center justify-center mt-7 border-b border-[#F4976C]'>
-        //                 <p className='text-2xl text-[#F4976C] font-extrabold'>Adicione um Item a sua lista</p>
-        //             </div>
-        //             <div className='relative flex flex-col items-center justify-center h-full pb-20 gap-10'>
-        //                 <div className='w-full flex flex-col justify-center items-center gap-2'>
-        //                     <div className='text-2xl'>Nome do Produto</div>
-        //                     <input
-        //                         placeholder={'Nome do Produto'}
-        //                         className='w-3/4 h-8 pl-1 text-center'
-        //                         onChange={(e) => handleAddItemName(e.target.value)}
-        //                         value={item?.name || ""}/>
-        //                 </div>
-        //                 <div className='w-full flex flex-col justify-center items-center gap-2'>
-        //                     <div className='text-2xl'>Categoria do Produto</div>
-        //                     <select
-        //                         className='w-3/4 h-8 pl-1 text-center overflow-y-auto'
-        //                         onChange={(e) => handleAddItemCategory(Number(e.target.value))}
-        //                         value={item?.category_id || ""}
-        //                     >
-        //                         <option value="" disabled>Selecione uma categoria</option>
-        //                         {categories.map((category) => (
-        //                             <option key={category.id} value={category.id}>
-        //                                 {category.name}
-        //                             </option>
-        //                         ))}
-        //                     </select>
-        //                 </div>
-        //                 <div className='absolute bottom-5 py-2 px-10 rounded border bg-[#F4976C]'>
-        //                     <div className='text-xl' onClick={handleAddItem}>Adicionar</div>
-        //                 </div>
-        //             </div>
-        //         </div>
-        //     </div>
-        // </div>
     )
 }
 

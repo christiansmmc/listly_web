@@ -37,7 +37,7 @@ const EditRoomModal = ({
             <div className='flex justify-between items-center w-full h-full'>
                 <div
                     className='relative flex flex-col mx-auto bg-[#FDF7EB] border-2 border-[#F4976C] rounded h-1/2 w-[95%]'>
-                    <div className='absolute -top-1 -right-1' onClick={handleCloseEditRoomOpen}>
+                    <div className='absolute -top-1 -right-1 cursor-pointer' onClick={handleCloseEditRoomOpen}>
                         <img
                             src={CloseIcon}
                             alt="icone"
@@ -58,7 +58,7 @@ const EditRoomModal = ({
                                     className='w-full h-10 p-2 border border-[#F4976C] rounded-lg'
                                     onChange={(e) => handleRoomName(e.target.value)}
                                     value={roomName}/>
-                                <div className='w-1/2 h-10 mx-auto flex justify-center items-center border rounded bg-[#F4976C]'>
+                                <div className='w-1/2 h-10 mx-auto flex items-center justify-center py-2 px-10 rounded-lg border border-[#F4976C] bg-[#FDF7EB] text-[#F4976C] font-extrabold cursor-pointer transition duration-200 hover:bg-[#F9E0C2] active:bg-[#F4976C] active:text-[#FDF7EB]'>
                                     <div className='text-xl'>
                                         Salvar
                                     </div>
@@ -66,9 +66,9 @@ const EditRoomModal = ({
                             </div>
                             <div className='mt-7 w-full flex'>
                                 <div className='relative w-1/2 flex flex-col items-center gap-2'>
-                                    <div className='w-20 h-20 border border-[#F4976C] rounded-lg cursor-pointer flex justify-center items-center'
+                                    <div className='w-20 h-20 border border-[#F4976C] rounded-lg bg-[#FDF7EB] cursor-pointer flex justify-center items-center transition duration-200 hover:bg-[#F9E0C2] active:bg-[#F4976C]'
                                          onClick={handleCopyRoom}>
-                                        <img src={CopyIcon} alt="icone" className="h-12 w-12"/>
+                                        <img src={CopyIcon} alt="icone" className="h-12 w-12 transition duration-200 active:scale-90"/>
                                         {copied && (
                                             <div
                                                 className='absolute w-52 -bottom-20 left-0 bg-[#F4976C] text-white p-2 rounded shadow-lg z-50  cursor-default'>
@@ -83,8 +83,8 @@ const EditRoomModal = ({
                                     </div>
                                 </div>
                                 <div className='w-1/2 flex flex-col items-center gap-2'>
-                                    <div className='w-20 h-20 border border-[#F4976C] rounded-lg cursor-pointer flex justify-center items-center'>
-                                        <img src={DeleteIcon} alt="icone" className="h-12 w-12"/>
+                                    <div className='w-20 h-20 border border-[#F4976C] rounded-lg bg-[#FDF7EB] cursor-pointer flex justify-center items-center transition duration-200 hover:bg-[#F9E0C2] active:bg-[#F4976C]'>
+                                        <img src={DeleteIcon} alt="icone" className="h-12 w-12 transition duration-200 active:scale-90"/>
                                     </div>
                                     <div>
                                         <div>
