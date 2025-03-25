@@ -20,13 +20,13 @@ const LoginCartPage = () => {
     }
 
     return (
-        <div className='min-h-screen w-full flex flex-col' style={{ backgroundImage: `url(${BackgroundImage})` }}>
+        <div className='h-screen w-full flex flex-col overflow-hidden' style={{ backgroundImage: `url(${BackgroundImage})` }}>
             <header className="w-full h-20 flex items-center justify-center bg-[#FDF7EB] bg-opacity-95 shadow-sm">
                 <h1 className='text-4xl font-extrabold text-[#F4976C]'>Listly</h1>
             </header>
 
-            <main className='flex-1 flex flex-col items-center justify-center py-8 px-4 relative'>
-                <div className='w-full max-w-md bg-[#fdfaf2] bg-opacity-95 p-8 border border-[#B48768] rounded-lg shadow-md mb-6'>
+            <main className='flex-1 flex flex-col items-center justify-center px-4 relative'>
+                <div className='w-full max-w-md bg-[#fdfaf2] bg-opacity-95 p-8 border border-[#B48768] rounded-lg shadow-md'>
                     <div className="mb-6">
                         <h2 className='text-xl text-center font-semibold text-[#F4976C] mb-4'>Código da lista</h2>
                         <div className="flex justify-center">
@@ -36,7 +36,6 @@ const LoginCartPage = () => {
                                 value={loginRoomCode}
                                 onChange={setLoginRoomCode}
                                 numInputs={4}
-                                shouldAutoFocus
                                 renderSeparator={<span className="mx-1.5"></span>}
                                 inputStyle={{ width: '45px' }}
                                 renderInput={(props) => (
@@ -73,7 +72,7 @@ const LoginCartPage = () => {
                     </div>
                 </div>
 
-                <div className='fixed bottom-6 left-0 right-0 w-full px-4'>
+                <div className='absolute bottom-6 left-0 right-0 w-full px-4'>
                     <div className='mx-auto max-w-md flex items-center gap-3'>
                         <button
                             onClick={() => setLocation("/")}
