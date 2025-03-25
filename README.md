@@ -2,6 +2,8 @@
 
 - favicon
 
+- Codigo da lista na config
+
 - Tratativa de erros com toast.
 
 - Adicionar loadings.
