@@ -219,23 +219,32 @@ const CartPage = ({ urlRoomCode }: { urlRoomCode: string }) => {
                 })}
             </div>
             <div
-                className='absolute w-full h-16 bottom-0 border-t border-[#F4976C] flex justify-between items-center bg-[#FDF7EB]'>
+                className='absolute w-full h-14 bottom-0 border-t border-[#F4976C] flex justify-between items-center bg-[#FDF7EB]
+                sm:h-16'>
                 <div
                     onClick={handleLogout}
-                    className='flex justify-center items-center w-36 h-16 cursor-pointer transition duration-200 hover:bg-[#F9E0C2] active:bg-[#F4976C]'>
-                    <img src={LeftArrowIcon} alt="icone" className="h-9 w-9 transition duration-200 active:scale-90" />
+                    className='flex justify-center items-center w-32 h-16 cursor-pointer transition duration-200 hover:bg-[#F9E0C2] active:bg-[#F4976C]
+                    sm:w-36'>
+                    <img src={LeftArrowIcon} alt="icone" className="h-8 w-8 transition duration-200 active:scale-90
+                    sm:h-9 sm:w-9" />
                 </div>
-                <div className='flex justify-center items-center w-full h-16'>
+                <div className='flex justify-center items-center w-full h-12 sm:h-16'>
                     <div
-                        className='flex items-center justify-center px-6 py-3 rounded-lg border border-[#F4976C] bg-[#FDF7EB] text-[#F4976C] font-extrabold cursor-pointer transition duration-200 hover:bg-[#F9E0C2] active:bg-[#F4976C] active:text-[#FDF7EB]'
+                        className='flex items-center justify-center text-sm px-6 py-3 rounded-lg border border-[#F4976C] bg-[#FDF7EB] text-[#F4976C] font-extrabold cursor-pointer 
+                        sm:text-base
+                        transition duration-200 
+                        hover:bg-[#F9E0C2] 
+                        active:bg-[#F4976C] active:text-[#FDF7EB]'
                         onClick={() => setIsAddItemOpen(true)}>
                         Adicionar item a lista
                     </div>
                 </div>
                 <div
                     onClick={() => setIsEditRoomOpen(true)}
-                    className='flex justify-center items-center w-36 h-16 cursor-pointer transition duration-200 hover:bg-[#F9E0C2] active:bg-[#F4976C]'>
-                    <img src={ConfigIcon} alt="icone" className="h-9 w-9 transition duration-200 active:scale-90" />
+                    className='flex justify-center items-center w-32 h-16 cursor-pointer transition duration-200 hover:bg-[#F9E0C2] active:bg-[#F4976C]
+                    sm:w-36'>
+                    <img src={ConfigIcon} alt="icone" className="h-8 w-8 transition duration-200 active:scale-90
+                    sm:h-9 sm:w-9" />
                 </div>
             </div>
             {isAddItemOpen &&

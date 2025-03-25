@@ -82,21 +82,25 @@ const AddItemModal = ({
                         <img
                             src={CloseIcon}
                             alt="icone"
-                            className="h-12 w-12"
+                            className="h-10 w-10 sm:h-12 sm:w-12"
                             onClick={handleCloseAddItemOpen}
                         />
                     </div>
                     <div className='flex flex-col h-full w-[90%] mx-auto'>
                         <div
                             className='w-[100%] mx-auto flex items-center justify-center mt-10 border-b border-[#F4976C]'>
-                            <p className='text-2xl text-[#F4976C] font-extrabold'>Adicione um Item a sua lista</p>
+                            <p className='text-xl text-[#F4976C] font-extrabold
+                            sm:text-2xl'>
+                                Adicione um Item a sua lista
+                            </p>
                         </div>
                         <div className='relative flex flex-col items-center justify-center h-full pb-20 gap-7'>
                             <div className='w-full flex flex-col justify-center items-center gap-2'>
-                                <div className='text-xl'>Nome do Produto</div>
+                                <div className='text-lg sm:text-xl'>Nome do Produto</div>
                                 <input
                                     placeholder={'Nome do Produto'}
-                                    className='w-3/4 h-10 p-2 border border-[#F4976C] rounded-lg'
+                                    className='w-[90%] h-10 p-2 border border-[#F4976C] rounded-lg text-sm 
+                                    sm:text-base sm:w-3/4'
                                     onChange={(e) => handleAddItemName(e.target.value)}
                                     value={item?.name || ""} />
                                 {errorMessage && (
@@ -104,9 +108,10 @@ const AddItemModal = ({
                                 )}
                             </div>
                             <div className='w-full flex flex-col justify-center items-center gap-2'>
-                                <div className='text-xl'>Categoria do Produto</div>
+                                <div className='text-lg sm:text-xl'>Categoria do Produto</div>
                                 <select
-                                    className='w-3/4 h-10 p-2 bg-white rounded-lg text-center overflow-y-auto'
+                                    className='w-[90%] h-10 p-2 bg-white rounded-lg text-center overflow-y-auto text-sm 
+                                    sm:text-base sm:w-3/4'
                                     onChange={(e) => handleAddItemCategory(Number(e.target.value))}
                                     value={item?.category_id || ""}
                                 >
@@ -119,7 +124,7 @@ const AddItemModal = ({
                                 </select>
                             </div>
                             <div className='absolute bottom-5 flex items-center justify-center py-2 px-10 rounded-lg border border-[#F4976C] bg-[#FDF7EB] text-[#F4976C] font-extrabold cursor-pointer transition duration-200 hover:bg-[#F9E0C2] active:bg-[#F4976C] active:text-[#FDF7EB]' onClick={handleAddItem}>
-                                <div className='text-xl'>Adicionar</div>
+                                <div className='text-lg sm:text-xl'>Adicionar</div>
                             </div>
                         </div>
                     </div>
