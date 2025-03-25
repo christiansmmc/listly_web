@@ -61,7 +61,10 @@ const CreateCartPage = () => {
                                     <input
                                         {...props}
                                         disabled={true}
-                                        className='text-3xl text-center rounded disabled:bg-white h-14 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#A9DEF9] disabled:cursor-not-allowed'
+                                        className='text-2xl text-center rounded disabled:bg-white h-14 border border-gray-300
+                                        sm:text-3xl
+                                        focus:outline-none focus:ring-2 focus:ring-[#A9DEF9]
+                                        disabled:cursor-not-allowed'
                                     />
                                 )}
                             />
@@ -83,7 +86,9 @@ const CreateCartPage = () => {
                                 renderInput={(props) => (
                                     <input
                                         {...props}
-                                        className='text-3xl text-center rounded bg-white h-14 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#A9DEF9]'
+                                        className='text-2xl text-center rounded bg-white h-14 border border-gray-300 
+                                        sm:text-3xl
+                                        focus:outline-none focus:ring-2 focus:ring-[#A9DEF9]'
                                     />
                                 )}
                             />
@@ -99,9 +104,8 @@ const CreateCartPage = () => {
                             onClick={() => setLocation("/")}
                             className='w-14 h-14 flex-shrink-0 shadow-md bg-[#fdfaf2] border border-[#B48768] flex items-center justify-center rounded-lg cursor-pointer
                             transition transform hover:scale-[1.05] hover:shadow-lg active:scale-[0.98] active:shadow-sm'>
-                            <img src={LeftArrowIcon} alt="Voltar" className="h-8 w-8" />
+                            <img src={LeftArrowIcon} alt="Voltar" className="h-7 w-7 sm:h-8 sm:w-8" />
                         </button>
-
                         <button
                             onClick={createCartLastStep}
                             disabled={newCartPasscode.length < 4}
@@ -113,7 +117,10 @@ const CreateCartPage = () => {
                                 alt="Criar lista"
                                 className={`h-9 w-9 ${newCartPasscode.length < 4 ? '' : 'filter brightness-0 invert'}`}
                             />
-                            <span className='text-lg font-medium'>Criar lista de compras</span>
+                            <span className='text-sm font-medium
+                            sm:text-lg'>
+                                Criar lista de compras
+                            </span>
                         </button>
                     </div>
                 </div>

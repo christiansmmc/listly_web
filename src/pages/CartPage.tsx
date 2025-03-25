@@ -166,7 +166,10 @@ const CartPage = ({ urlRoomCode }: { urlRoomCode: string }) => {
                     <div
                         className="fixed top-0 left-0 w-full h-20 flex items-center justify-center bg-[#FDF7EB]">
                         <div className='relative flex items-center justify-center border-b border-[#F4976C] w-[90%]'>
-                            <p className='text-3xl font-extrabold text-[#F4976C]'>{formatedRoomData.name}</p>
+                            <p className='text-2xl font-extrabold text-[#F4976C]
+                            sm:text-3xl'>
+                                {formatedRoomData.name}
+                            </p>
                         </div>
                     </div>
                 ) : <div
@@ -176,14 +179,19 @@ const CartPage = ({ urlRoomCode }: { urlRoomCode: string }) => {
             <div className="flex flex-col gap-2 pt-24 h-[calc(100dvh-80px)] overflow-y-auto">
                 {formatedRoomData != null && formatedRoomData.categories.length <= 0 && (
                     <div className='flex flex-col justify-center items-center p-6 bg-[#FDF7EB] bg-opacity-90 w-[90%] mx-auto rounded-lg shadow-md border-2 border-[#F3E0C2]'>
-                        <p className='text-2xl font-extrabold text-[#F4976C] text-center mb-3'>
+                        <p className='text-xl font-extrabold text-[#F4976C] text-center mb-3
+                        sm:text-2xl'>
                             Seu carrinho está vazio!
                         </p>
-                        <p className='text-md text-gray-600 text-center mb-5'>
+                        <p className='text-base text-gray-600 text-center mb-5'>
                             Adicione itens à sua lista de compras para começar a organizá-los.
                         </p>
                         <button
-                            className='flex items-center justify-center px-6 py-3 rounded-lg border border-[#F4976C] bg-[#F4976C] text-white font-bold cursor-pointer transition duration-200 hover:bg-[#f3865c] active:scale-95'
+                            className='text-sm flex items-center justify-center px-6 py-3 rounded-lg border border-[#F4976C] bg-[#F4976C] text-white font-bold cursor-pointer 
+                            sm:text-base
+                            transition duration-200 
+                            hover:bg-[#f3865c] 
+                            active:scale-95'
                             onClick={() => setIsAddItemOpen(true)}>
                             Adicionar primeiro item
                         </button>

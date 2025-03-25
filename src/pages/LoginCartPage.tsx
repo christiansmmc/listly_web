@@ -78,7 +78,7 @@ const LoginCartPage = () => {
                             onClick={() => setLocation("/")}
                             className='w-14 h-14 flex-shrink-0 shadow-md bg-[#fdfaf2] border border-[#B48768] flex items-center justify-center rounded-lg cursor-pointer
                             transition transform hover:scale-[1.05] hover:shadow-lg active:scale-[0.98] active:shadow-sm'>
-                            <img src={LeftArrowIcon} alt="Voltar" className="h-8 w-8" />
+                            <img src={LeftArrowIcon} alt="Voltar" className="h-7 w-7 sm:h-8 sm:w-8" />
                         </button>
 
                         <button
@@ -92,7 +92,7 @@ const LoginCartPage = () => {
                                 alt="Entrar na lista"
                                 className={`h-9 w-9 ${loginRoomCode.length < 4 || loginRoomPasscode.length < 4 ? '' : 'filter brightness-0 invert'}`}
                             />
-                            <span className='text-lg font-medium'>Entrar na lista de compras</span>
+                            <span className='text-sm font-medium sm:text-lg'>Entrar na lista de compras</span>
                         </button>
                     </div>
                 </div>
