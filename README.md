@@ -1,5 +1,7 @@
 # TODO
 
+- favicon
+
 - Tratativa de erros com toast.
 
 - Adicionar loadings.
