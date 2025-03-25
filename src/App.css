@@ -14,7 +14,7 @@
 html,
 body {
     height: 100vh;
-    /* height: -webkit-fill-available; */
+    height: -webkit-fill-available;
     font-family: 'Poppins', Inter, sans-serif;
     line-height: 1.6;
     background-color: #fdf7eb;
