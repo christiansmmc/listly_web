@@ -13,17 +13,11 @@
 
 html,
 body {
-    height: 100%;
+    height: 100vh;
+    height: -webkit-fill-available;
     font-family: 'Poppins', Inter, sans-serif;
     line-height: 1.6;
     background-color: #fdf7eb;
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
-    height: 100vh;
-    /* Suporte para browsers móveis */
-    height: -webkit-fill-available;
-    height: stretch;
 }
 
 #root {
