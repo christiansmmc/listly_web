@@ -20,7 +20,7 @@ const LoginCartPage = () => {
     }
 
     return (
-        <div className='fixed inset-0 flex flex-col' style={{ backgroundImage: `url(${BackgroundImage})` }}>
+        <div className='h-full flex flex-col' style={{ backgroundImage: `url(${BackgroundImage})` }}>
             <header className="w-full h-20 flex items-center justify-center bg-[#FDF7EB] bg-opacity-95 shadow-sm">
                 <h1 className='text-4xl font-extrabold text-[#F4976C]'>Listly</h1>
             </header>
