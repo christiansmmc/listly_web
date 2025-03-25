@@ -144,6 +144,10 @@ const CartPage = ({ urlRoomCode }: { urlRoomCode: string }) => {
                 });
             });
 
+            categoryMap.forEach((category) => {
+                category.items.sort((a, b) => a.id - b.id);
+            });
+
             setFormatedRoomData({
                 name: data.name,
                 categories: Array.from(categoryMap.values()).sort((a, b) => {
