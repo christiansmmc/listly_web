@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
-import { AddItemDTO, ListCategoryResponse } from "../types/global.ts";
+import { useEffect, useState, useRef } from "react";
+import { AddItemDTO, ListCategoryResponse, ProductSuggestion } from "../types/global.ts";
 import CloseIcon from '../assets/close.png'
-import { useAddRoomItemMutate } from "../api/item/query.ts";
+import { useAddRoomItemMutate, useGetProductSuggestionsQuery } from "../api/item/query.ts";
 import { useGetCategoriesQuery } from "../api/category/query.ts";
+import { useDebounce } from "../hooks/useDebounce.ts";
 
 interface AddItemModalProps {
     roomCode: string;
@@ -16,9 +17,15 @@ const AddItemModal = ({
     const [categories, setCategories] = useState<ListCategoryResponse[]>([])
     const [item, setItem] = useState<AddItemDTO>({})
     const [errorMessage, setErrorMessage] = useState<string>("")
+    const [searchQuery, setSearchQuery] = useState<string>("")
+    const [showSuggestions, setShowSuggestions] = useState<boolean>(false)
+    const suggestionsRef = useRef<HTMLDivElement>(null)
+
+    const debouncedQuery = useDebounce(searchQuery, 300)
 
     const { data } = useGetCategoriesQuery();
     const { mutate } = useAddRoomItemMutate();
+    const { data: suggestions = [] } = useGetProductSuggestionsQuery(debouncedQuery, debouncedQuery.length > 2);
 
     const handleAddItem = () => {
         if (!item.name || item.name.trim() === "") {
@@ -49,11 +56,35 @@ const AddItemModal = ({
 
     const handleAddItemName = (name: string) => {
         setErrorMessage("");
+        setSearchQuery(name);
         setItem((prevItem) => ({
             ...prevItem,
             name,
         }));
+        setShowSuggestions(true);
     }
+
+    const handleSelectSuggestion = (suggestion: string) => {
+        setSearchQuery(suggestion);
+        setItem((prevItem) => ({
+            ...prevItem,
+            name: suggestion,
+        }));
+        setShowSuggestions(false);
+    }
+
+    const handleClickOutside = (e: MouseEvent) => {
+        if (suggestionsRef.current && !suggestionsRef.current.contains(e.target as Node)) {
+            setShowSuggestions(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     const handleAddItemCategory = (categoryId: number) => {
         setItem((prevItem) => ({
@@ -97,12 +128,32 @@ const AddItemModal = ({
                         <div className='relative flex flex-col items-center justify-center h-full pb-20 gap-7'>
                             <div className='w-full flex flex-col justify-center items-center gap-2'>
                                 <div className='text-lg sm:text-xl'>Nome do Produto</div>
-                                <input
-                                    placeholder={'Nome do Produto'}
-                                    className='w-[90%] h-10 p-2 border border-[#F4976C] rounded-lg text-sm 
-                                    sm:text-base sm:w-3/4'
-                                    onChange={(e) => handleAddItemName(e.target.value)}
-                                    value={item?.name || ""} />
+                                <div className='relative w-[90%] sm:w-3/4'>
+                                    <input
+                                        placeholder={'Nome do Produto'}
+                                        className='w-full h-10 p-2 border border-[#F4976C] rounded-lg text-sm 
+                                        sm:text-base'
+                                        onChange={(e) => handleAddItemName(e.target.value)}
+                                        value={searchQuery}
+                                        onFocus={() => setShowSuggestions(true)} />
+
+                                    {showSuggestions && suggestions.length > 0 && (
+                                        <div
+                                            ref={suggestionsRef}
+                                            className='absolute z-10 w-full mt-1 max-h-40 overflow-y-auto bg-white border border-[#F4976C] rounded-lg shadow-lg'
+                                        >
+                                            {(suggestions as ProductSuggestion[]).map((suggestion: ProductSuggestion, index: number) => (
+                                                <div
+                                                    key={index}
+                                                    className='p-2 hover:bg-[#F9E0C2] cursor-pointer text-sm sm:text-base'
+                                                    onClick={() => handleSelectSuggestion(suggestion.name)}
+                                                >
+                                                    {suggestion.name}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                                 {errorMessage && (
                                     <div className='text-red-500 text-sm'>{errorMessage}</div>
                                 )}

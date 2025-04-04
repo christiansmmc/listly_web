@@ -26,7 +26,7 @@ import { useLocation } from "wouter";
 import { useRoomData } from "../context/RoomContext.tsx";
 import { useGetRoomDataQuery, useValidateRoomAccessCodeMutate } from "../api/room/query.ts";
 import { useCheckItemMutate, useRemoveItemMutate } from "../api/item/query.ts";
-import { useDebounce } from "../hooks/useDebounce.ts";
+import { useCooldown } from "../hooks/useDebounce.ts";
 import { getRoomFromAccessToken } from "../utils/securityUtils.ts";
 
 const categoryIcons: Record<string, string> = {
@@ -82,11 +82,11 @@ const CartPage = ({ urlRoomCode }: { urlRoomCode: string }) => {
         setIsEditRoomOpen(false);
     }
 
-    const debouncedCheckItem = useDebounce((itemId: number) => {
+    const debouncedCheckItem = useCooldown((itemId: number) => {
         checkItemMutate({ roomCode, itemId });
     }, 300);
 
-    const debouncedRemoveItem = useDebounce((itemId: number) => {
+    const debouncedRemoveItem = useCooldown((itemId: number) => {
         removeItemMutate({ roomCode, itemId });
     }, 300);
 

@@ -1,4 +1,4 @@
-import {AxiosRequestConfig} from "axios";
+import { AxiosRequestConfig } from "axios";
 
 export interface CreateCartFirstStepResponse {
     code: string
@@ -46,6 +46,10 @@ export interface AddItemDTO {
     name?: string,
     category_id?: number,
     category_name?: string
+}
+
+export interface ProductSuggestion {
+    name: string
 }
 
 export interface ValidateRoomRequest {

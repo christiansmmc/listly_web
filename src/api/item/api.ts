@@ -1,5 +1,5 @@
 import api from "../axiosConfig.ts";
-import {AddItemRequest} from "../../types/global.ts";
+import { AddItemRequest } from "../../types/global.ts";
 
 export const addRoomItemRequest = async (
     item: AddItemRequest,
@@ -21,3 +21,8 @@ export const removeItemRequest = async (
 ) => {
     await api.delete(`/rooms/${roomCode}/items/${itemId}`);
 }
+
+export const getProductSuggestionsRequest = async (query: string) => {
+    const { data } = await api.get('/product-suggestions', { params: { q: query } });
+    return data;
+};

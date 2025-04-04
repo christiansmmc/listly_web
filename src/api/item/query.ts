@@ -1,16 +1,16 @@
-import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {addRoomItemRequest, checkItemRequest, removeItemRequest} from "./api.ts";
-import {AddItemDTO, GetRoomDataResponseType} from "../../types/global.ts";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { addRoomItemRequest, checkItemRequest, getProductSuggestionsRequest, removeItemRequest } from "./api.ts";
+import { AddItemDTO, GetRoomDataResponseType } from "../../types/global.ts";
 
 export const useAddRoomItemMutate = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({item, roomCode}: { item: AddItemDTO; roomCode: string }) =>
-            addRoomItemRequest({name: item.name || "", category_id: item.category_id || 0}, roomCode),
+        mutationFn: async ({ item, roomCode }: { item: AddItemDTO; roomCode: string }) =>
+            addRoomItemRequest({ name: item.name || "", category_id: item.category_id || 0 }, roomCode),
 
-        onMutate: async ({item, roomCode}) => {
-            await queryClient.cancelQueries({queryKey: ["GetRoomData", roomCode]});
+        onMutate: async ({ item, roomCode }) => {
+            await queryClient.cancelQueries({ queryKey: ["GetRoomData", roomCode] });
 
             const previousRoomData = queryClient.getQueryData<GetRoomDataResponseType>(["GetRoomData", roomCode]);
 
@@ -25,13 +25,13 @@ export const useAddRoomItemMutate = () => {
                             id: Math.random(),
                             name: item.name || "",
                             checked: false,
-                            category: {id: item.category_id || Math.random(), name: item.category_name || ""},
+                            category: { id: item.category_id || Math.random(), name: item.category_name || "" },
                         },
                     ],
                 };
             });
 
-            return {previousRoomData};
+            return { previousRoomData };
         },
 
         onError: (_err, _variables, context) => {
@@ -40,8 +40,8 @@ export const useAddRoomItemMutate = () => {
             }
         },
 
-        onSettled: (_data, _error, {roomCode}) => {
-            queryClient.invalidateQueries({queryKey: ["GetRoomData", roomCode]});
+        onSettled: (_data, _error, { roomCode }) => {
+            queryClient.invalidateQueries({ queryKey: ["GetRoomData", roomCode] });
         },
     });
 };
@@ -51,12 +51,12 @@ export const useCheckItemMutate = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({roomCode, itemId}: { roomCode?: string; itemId: number }) => {
+        mutationFn: async ({ roomCode, itemId }: { roomCode?: string; itemId: number }) => {
             return checkItemRequest(roomCode || "", itemId);
         },
 
-        onMutate: async ({roomCode, itemId}) => {
-            await queryClient.cancelQueries({queryKey: ["GetRoomData", roomCode]});
+        onMutate: async ({ roomCode, itemId }) => {
+            await queryClient.cancelQueries({ queryKey: ["GetRoomData", roomCode] });
 
             const previousRoomData = queryClient.getQueryData<GetRoomDataResponseType>(["GetRoomData", roomCode]);
 
@@ -66,12 +66,12 @@ export const useCheckItemMutate = () => {
                 return {
                     ...oldData,
                     items: oldData.items.map((item) =>
-                        item.id === itemId ? {...item, checked: !item.checked} : item
+                        item.id === itemId ? { ...item, checked: !item.checked } : item
                     ),
                 };
             });
 
-            return {previousRoomData};
+            return { previousRoomData };
         },
 
         onError: (_err, _variables, context) => {
@@ -80,8 +80,8 @@ export const useCheckItemMutate = () => {
             }
         },
 
-        onSettled: (_data, _error, {roomCode}) => {
-            queryClient.invalidateQueries({queryKey: ["GetRoomData", roomCode]});
+        onSettled: (_data, _error, { roomCode }) => {
+            queryClient.invalidateQueries({ queryKey: ["GetRoomData", roomCode] });
         },
     });
 };
@@ -90,12 +90,12 @@ export const useRemoveItemMutate = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({roomCode, itemId}: { roomCode?: string; itemId: number }) => {
+        mutationFn: async ({ roomCode, itemId }: { roomCode?: string; itemId: number }) => {
             return removeItemRequest(roomCode || "", itemId);
         },
 
-        onMutate: async ({roomCode, itemId}) => {
-            await queryClient.cancelQueries({queryKey: ["GetRoomData", roomCode]});
+        onMutate: async ({ roomCode, itemId }) => {
+            await queryClient.cancelQueries({ queryKey: ["GetRoomData", roomCode] });
 
             const previousRoomData = queryClient.getQueryData<GetRoomDataResponseType>(["GetRoomData", roomCode]);
 
@@ -108,7 +108,7 @@ export const useRemoveItemMutate = () => {
                 };
             });
 
-            return {previousRoomData};
+            return { previousRoomData };
         },
 
         onError: (_err, _variables, context) => {
@@ -117,8 +117,17 @@ export const useRemoveItemMutate = () => {
             }
         },
 
-        onSettled: (_data, _error, {roomCode}) => {
-            queryClient.invalidateQueries({queryKey: ["GetRoomData", roomCode]});
+        onSettled: (_data, _error, { roomCode }) => {
+            queryClient.invalidateQueries({ queryKey: ["GetRoomData", roomCode] });
         },
+    });
+};
+
+export const useGetProductSuggestionsQuery = (query: string, enabled: boolean = true) => {
+    return useQuery({
+        queryKey: ["GetProductSuggestions", query],
+        queryFn: () => getProductSuggestionsRequest(query),
+        enabled: enabled && query.length > 2,
+        staleTime: 60000, // 1 minute cache
     });
 };
